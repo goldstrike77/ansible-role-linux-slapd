@@ -8,10 +8,19 @@
     group: 'ldap'
   register: slapd_db_config
 
+- name: OpenLDAP configuration file transfer.
+  template:
+    src: 'slapd.j2'
+    dest: '/etc/sysconfig/slapd'
+    owner: 'root'
+    group: 'root'
+    mode: '644'
+  register: slapd_conf_file
+
 - name: Reload the OpenLDAP service.
   shell: echo ''
   notify: 'Ensure OpenLDAP service is enabled'
-  when: slapd_yum_status is changed or slapd_db_config is changed
+  when: slapd_yum_status is changed or slapd_db_config is changed or slapd_conf_file is changed
 
 - name: Force the handler to run immediately.
   meta: flush_handlers

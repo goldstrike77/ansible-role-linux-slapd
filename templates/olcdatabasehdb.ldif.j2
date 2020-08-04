@@ -7,7 +7,7 @@ replace: olcRootDN
 olcRootDN: cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}
 -
 replace: olcRootPW
-olcRootPW: {MD5}{{ 'slapd_root_pass' | password_hash('md5', 65534 | random(seed=group_names[-1]) | string) }}
+olcRootPW: {{ slapd_root_pass_hash }}
 -
 {% if slapd_servers | length > 1 %}
 add: olcSyncRepl

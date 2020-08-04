@@ -8,6 +8,20 @@
 - name: Include firewall tasks.
   include: 'firewall.yml'
 
+- name: Hash OpenLDAP password.
+  command: 'slappasswd -s {{ slapd_root_pass | default("changeme") }}'
+  register: slapd_root_pass_out
+  when: slapd_servers[0] in ansible_default_ipv4.address
+  no_log: true
+
+- name: Set the OpenLDAP password hash.
+  set_fact:
+    slapd_root_pass_hash: '{{ slapd_root_pass_out.stdout }}'
+  when: slapd_root_pass_out.stdout is defined
+  delegate_to: '{{ item }}'
+  delegate_facts: true
+  loop: '{{ groups[group_names[-1]] }}'
+
 - name: Configuration the OpenLDAP.
   include: 'configureation.yml'
 
@@ -15,6 +29,6 @@
   include: 'replication.yml'
   when: slapd_servers | length > 1
 
-#- name: Include database tasks.
-#  include: 'database.yml'
-#  when: slapd_servers[0] in ansible_default_ipv4.address
+- name: Include database tasks.
+  include: 'database.yml'
+  when: slapd_servers[0] in ansible_default_ipv4.address

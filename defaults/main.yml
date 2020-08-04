@@ -3,6 +3,7 @@
 slapd_is_install: false # A boolean value, whether install the HashiCorp Vault.
 slapd_root_user: 'ldapadm' # Specify the DN to access control or administrative restrictions for operations.
 slapd_root_pass: 'changeme' # Specify a password for the DN for the rootdn.
+slapd_ssl: false # A boolean value, whether Encrypting client and cluster communications.
 
 # Listen port #
 slapd_port_arg: # Defines communication port.
