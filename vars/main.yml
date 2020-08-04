@@ -1,0 +1,24 @@
+---
+slapd_servers: "\
+  {% set _slapd_servers = [] %}\
+  {% for host in groups[group_names[-1]] %}\
+    {% if _slapd_servers.append(hostvars[host]['ansible_host']) %}{% endif %}\
+  {% endfor %}\
+  {{ _slapd_servers }}"
+
+slapd_repl_ldif:
+  - 'syncprov_mod'
+  - 'olcserverid'
+  - 'olcdatabase'
+  - 'configrep'
+
+slapd_conf_ldif:
+  - 'syncprov'
+  - 'olcdatabasehdb'
+  - 'monitor'
+  - 'base'
+
+slapd_conf_schema:
+  - 'cosine'
+  - 'nis'
+  - 'inetorgperson'

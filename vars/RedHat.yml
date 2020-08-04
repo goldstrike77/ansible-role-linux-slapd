@@ -1,0 +1,9 @@
+---
+slapd_packages:
+  - 'compat-openldap'
+  - 'libselinux-utils'
+  - 'openldap'
+  - 'openldap-clients'
+  - 'openldap-servers'
+  - 'openldap-servers-sql'
+  - 'policycoreutils-python'

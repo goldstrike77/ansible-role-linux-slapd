@@ -1,0 +1,17 @@
+---
+- name: Copy the sample database configuration file.
+  copy:
+    src: '/usr/share/openldap-servers/DB_CONFIG.example'
+    dest: '/var/lib/ldap/DB_CONFIG'
+    remote_src: 'yes'
+    owner: 'ldap'
+    group: 'ldap'
+  register: slapd_db_config
+
+- name: Reload the OpenLDAP service.
+  shell: echo ''
+  notify: 'Ensure OpenLDAP service is enabled'
+  when: slapd_yum_status is changed or slapd_db_config is changed
+
+- name: Force the handler to run immediately.
+  meta: flush_handlers

@@ -1,0 +1,8 @@
+dn: cn=config
+changetype: modify
+add: olcServerID
+{% for host in slapd_servers %}
+{% if ansible_default_ipv4.address == host %}
+olcServerID: {{ loop.index }}
+{% endif %}
+{% endfor %}

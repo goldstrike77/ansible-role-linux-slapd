@@ -1,0 +1,45 @@
+---
+#- name: Hash OpenLDAP replication password.
+#  command: 'slappasswd -s {{ slapd_root_pass | default("changeme") }}'
+#  register: slapd_root_pass_hash
+#  no_log: true
+
+- name: OpenLDAP configuration file transfer.
+  template:
+    src: '{{ item }}.ldif.j2'
+    dest: '/tmp/{{ item }}.ldif'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0644'
+  loop: '{{ slapd_repl_ldif }}'
+#  no_log: true
+
+- name: Enable the OpenLDAP syncprov module.
+  command: 'ldapadd -Y EXTERNAL -H ldapi:// -f /tmp/syncprov_mod.ldif'
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Change the olcServerID on all servers.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcserverid.ldif'
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Modify root password for OpenLDAP.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabase.ldif'
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Configure replication on all servers.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/configrep.ldif'
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"

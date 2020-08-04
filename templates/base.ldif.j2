@@ -1,0 +1,17 @@
+dn: dc={{ datacenter }},dc={{ domain }}
+dc: {{ datacenter }}
+objectClass: top
+objectClass: domain
+
+dn: cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}
+objectClass: organizationalRole
+cn: {{ slapd_root_user }}
+description: LDAP Manager
+
+dn: ou=People,dc={{ datacenter }},dc={{ domain }}
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Group,dc={{ datacenter }},dc={{ domain }}
+objectClass: organizationalUnit
+ou: Group

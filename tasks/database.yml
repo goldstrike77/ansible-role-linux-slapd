@@ -1,0 +1,41 @@
+---
+- name: Hash OpenLDAP password.
+  command: 'slappasswd -s {{ slapd_root_pass | default("changeme") }}'
+  register: slapd_root_pass_hash
+  no_log: true
+
+- name: OpenLDAP configuration file transfer.
+  template:
+    src: '{{ item }}.ldif.j2'
+    dest: '/tmp/{{ item }}.ldif'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0644'
+  loop: '{{ slapd_conf_ldif }}'
+  no_log: true
+
+- name: Enable syncprov for hdb database.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/syncprov.ldif'
+  changed_when: false
+  failed_when: false
+
+- name: Configure hdb database.
+  command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/olcdatabasehdb.ldif'
+  changed_when: false
+  failed_when: false
+
+- name: Restrict the monitor access only to LDAP root.
+  command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/monitor.ldif'
+  changed_when: false
+  failed_when: false
+
+- name: Add the OpenLDAP schemas.
+  command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ item }}.ldif'
+  loop: '{{ slapd_conf_schema }}'
+  changed_when: false
+  failed_when: false
+
+- name: Build the directory structure for your domain.
+  command: 'ldapadd -x -w {{ slapd_root_pass | default("changeme") }} -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -f /tmp/base.ldif'
+  changed_when: false
+  failed_when: false

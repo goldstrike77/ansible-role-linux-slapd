@@ -1,0 +1,28 @@
+---
+# General parameters #
+slapd_is_install: false # A boolean value, whether install the HashiCorp Vault.
+slapd_root_user: 'ldapadm' # Specify the DN to access control or administrative restrictions for operations.
+slapd_root_pass: 'changeme' # Specify a password for the DN for the rootdn.
+
+# Listen port #
+slapd_port_arg: # Defines communication port.
+  ldap: '389'
+  ldaps: '636'
+
+# Service Mesh #
+environments: 'Development' # Define the service environment.
+datacenter: 'dc01' # Define the DataCenter.
+domain: 'local' # Define the Domain.
+#tags: # Define the service custom label.
+#  subscription: 'default'
+#  owner: 'nobody'
+#  department: 'Infrastructure'
+#  organization: 'The Company'
+#  region: 'China'
+exporter_is_install: false # Whether to install prometheus exporter.
+consul_public_register: false # Whether register a exporter service with public consul client.
+consul_public_exporter_token: '00000000-0000-0000-0000-000000000000' # Public Consul client ACL token.
+consul_public_http_prot: 'https' # The consul Hypertext Transfer Protocol.
+consul_public_http_port: '8500' # The consul HTTP API port.
+consul_public_clients: # List of public consul clients.
+  - '127.0.0.1'

@@ -1,0 +1,10 @@
+---
+- name: Enable OpenLDAP service.
+  systemd:
+    name: 'slapd.service'
+    enabled: 'yes'
+    state: 'restarted'
+    daemon_reload: 'yes'
+  async: 1
+  poll: 0
+  listen: Ensure OpenLDAP service is enabled

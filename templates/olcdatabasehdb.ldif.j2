@@ -1,0 +1,28 @@
+dn: olcDatabase={2}hdb,cn=config
+changetype: modify
+replace: olcSuffix
+olcSuffix: dc={{ datacenter }},dc={{ domain }}
+-
+replace: olcRootDN
+olcRootDN: cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}
+-
+replace: olcRootPW
+olcRootPW: {MD5}{{ 'slapd_root_pass' | password_hash('md5', 65534 | random(seed=group_names[-1]) | string) }}
+-
+{% if slapd_servers | length > 1 %}
+add: olcSyncRepl
+{% for host in slapd_servers %}
+olcSyncRepl: rid=00{{ loop.index + slapd_servers | length }} provider=ldap://{{ host }} binddn="cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" bindmethod=simple
+  credentials={{ slapd_root_pass | default('changeme') }} searchbase="dc={{ datacenter }},dc={{ domain }}" type=refreshOnly
+  interval=00:00:00:10 retry="5 5 300 5" timeout=5
+{% endfor %}
+-
+{% endif %}
+add: olcDbIndex
+olcDbIndex: entryUUID  eq
+-
+add: olcDbIndex
+olcDbIndex: entryCSN  eq
+-
+add: olcMirrorMode
+olcMirrorMode: TRUE
