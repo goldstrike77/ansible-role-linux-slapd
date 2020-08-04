@@ -6,6 +6,9 @@ slapd_servers: "\
   {% endfor %}\
   {{ _slapd_servers }}"
 
+slapd_cert_ldif:
+  - 'certs'
+
 slapd_repl_ldif:
   - 'syncprov_mod'
   - 'olcserverid'
@@ -22,3 +25,11 @@ slapd_conf_schema:
   - 'cosine'
   - 'nis'
   - 'inetorgperson'
+
+slapd_cert_path: '/etc/openldap/certs'
+
+slapd_pypi_url: 'pypi.tuna.tsinghua.edu.cn'
+
+slapd_python_dependent_packages:
+  - 'pip'
+  - 'cryptography'

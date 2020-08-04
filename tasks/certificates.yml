@@ -1,0 +1,63 @@
+---
+- name: Install requirement python package.
+  pip:
+    name: '{{ slapd_python_dependent_packages }}'
+    state: 'forcereinstall'
+    extra_args: '--default-timeout=120 --ignore-installed -i https://{{ slapd_pypi_url }}/simple --trusted-host {{ slapd_pypi_url }}'
+  register: slapd_python_status
+  until: slapd_python_status is succeeded
+  retries: 5
+  delay: 2
+
+- name: Check private key exists.
+  stat:
+    path: '{{ slapd_cert_path }}/server.key'
+  register: check_cert_keys
+
+- name: Certificate Signing operation.
+  block:
+    - name: Selfsigned CA file transfer.
+      copy:
+        src: 'ssl/{{ item }}'
+        dest: '{{ slapd_cert_path }}/{{ item }}'
+        owner: 'ldap'
+        mode: '640'
+      loop:
+        - 'ca-cert.pem'
+        - 'ca-key.pem'
+    - name: Generate an OpenSSL private key.
+      openssl_privatekey:
+        path: '{{ slapd_cert_path }}/server.key'
+        select_crypto_backend: 'cryptography'
+        size: '4096'
+        type: 'RSA'
+        owner: 'ldap'
+        mode: '0640'
+        state: 'present'
+    - name: Generate an OpenSSL Certificate Signing Request.
+      openssl_csr:
+        path: '{{ slapd_cert_path }}/server.csr'
+        privatekey_path: '{{ slapd_cert_path }}/server.key'
+        select_crypto_backend: 'cryptography'
+        common_name: 'Server'
+        subject_alt_name:
+          - 'DNS:{{ ansible_hostname }}'
+          - 'DNS:{{ ansible_fqdn }}'
+          - 'DNS:{{ group_names[-1] | upper | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-ldap.service.{{ datacenter | lower }}.{{ domain | lower }}'
+          - 'IP:{{ ansible_default_ipv4.address }}'
+        owner: 'ldap'
+        mode: '0640'
+        state: 'present'
+    - name: Generate an OpenSSL certificate signed with your own CA certificate.
+      openssl_certificate:
+        path: '{{ slapd_cert_path }}/server.crt'
+        csr_path: '{{ slapd_cert_path }}/server.csr'
+        ownca_path: '{{ slapd_cert_path }}/ca-cert.pem'
+        ownca_privatekey_path: '{{ slapd_cert_path }}/ca-key.pem'
+        select_crypto_backend: 'cryptography'
+        ownca_not_after: '+7305d'
+        provider: 'ownca'
+        owner: 'ldap'
+        mode: '0640'
+        state: 'present'
+  when: not check_cert_keys.stat.exists or check_cert_keys.stat.size == 0

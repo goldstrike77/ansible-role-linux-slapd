@@ -1,0 +1,14 @@
+dn: cn=config
+changetype: modify
+replace: olcTLSCACertificateFile
+olcTLSCACertificateFile: {{ slapd_cert_path }}/ca-cert.pem
+
+dn: cn=config
+changetype: modify
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: {{ slapd_cert_path }}/server.crt
+
+dn: cn=config
+changetype: modify
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: {{ slapd_cert_path }}/server.key

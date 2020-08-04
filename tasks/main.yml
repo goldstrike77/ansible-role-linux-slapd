@@ -8,6 +8,10 @@
 - name: Include firewall tasks.
   include: 'firewall.yml'
 
+- name: Include certificate tasks.
+  include: 'certificates.yml'
+  when: slapd_ssl | bool
+
 - name: Hash OpenLDAP password.
   command: 'slappasswd -s {{ slapd_root_pass | default("changeme") }}'
   register: slapd_root_pass_out

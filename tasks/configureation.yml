@@ -8,6 +8,33 @@
     group: 'ldap'
   register: slapd_db_config
 
+- name: Reload the OpenLDAP service.
+  shell: echo ''
+  notify: 'Ensure OpenLDAP service is enabled'
+  when: slapd_yum_status is changed or slapd_db_config is changed
+
+- name: Force the handler to run immediately.
+  meta: flush_handlers
+
+- name: Certificates LDAP Data Interchange Files transfer.
+  template:
+    src: '{{ item }}.ldif.j2'
+    dest: '/tmp/{{ item }}.ldif'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0644'
+  loop: '{{ slapd_cert_ldif }}'
+  when: slapd_ssl | bool
+
+- name: Enable the OpenLDAP TLS Configuration.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/certs.ldif'
+  when: slapd_ssl | bool
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
 - name: OpenLDAP configuration file transfer.
   template:
     src: 'slapd.j2'
@@ -20,7 +47,7 @@
 - name: Reload the OpenLDAP service.
   shell: echo ''
   notify: 'Ensure OpenLDAP service is enabled'
-  when: slapd_yum_status is changed or slapd_db_config is changed or slapd_conf_file is changed
+  when: slapd_conf_file is changed
 
 - name: Force the handler to run immediately.
   meta: flush_handlers

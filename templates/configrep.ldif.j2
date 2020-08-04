@@ -4,7 +4,7 @@ dn: cn=config
 changetype: modify
 replace: olcServerID
 {% for host in slapd_servers %}
-olcServerID: {{ loop.index }} ldap://{{ host }}
+olcServerID: {{ loop.index }} {% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }}
 {% endfor %}
 
 ### Enable Config Replication###
@@ -21,8 +21,8 @@ dn: olcDatabase={0}config,cn=config
 changetype: modify
 add: olcSyncRepl
 {% for host in slapd_servers %}
-olcSyncRepl: rid=00{{ loop.index }} provider=ldap://{{ host }} binddn="cn=config"
-  bindmethod=simple credentials={{ slapd_root_pass | default('changeme') }} searchbase="cn=config"
+olcSyncRepl: rid=00{{ loop.index }} provider={% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }} binddn="cn=config"
+  bindmethod=simple tls_reqcert=never credentials={{ slapd_root_pass | default('changeme') }} searchbase="cn=config"
   type=refreshAndPersist retry="5 5 300 5" timeout=5
 {% endfor %}
 -

@@ -7,3 +7,4 @@ slapd_packages:
   - 'openldap-servers'
   - 'openldap-servers-sql'
   - 'policycoreutils-python'
+  - 'python-pip'
