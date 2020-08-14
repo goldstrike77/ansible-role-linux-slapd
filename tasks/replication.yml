@@ -24,13 +24,6 @@
     - "'modifying entry' not in slapd_conf_status.stdout"
     - "'adding new entry' not in slapd_conf_status.stdout"
 
-- name: Modify root password for OpenLDAP.
-  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabase.ldif'
-  failed_when:
-    - "'already exists' not in slapd_conf_status.stdout"
-    - "'modifying entry' not in slapd_conf_status.stdout"
-    - "'adding new entry' not in slapd_conf_status.stdout"
-
 - name: Configure replication on all servers.
   command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/configrep.ldif'
   register: slapd_conf_status

@@ -22,7 +22,7 @@ changetype: modify
 add: olcSyncRepl
 {% for host in slapd_servers %}
 olcSyncRepl: rid=00{{ loop.index }} provider={% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }} binddn="cn=config"
-  bindmethod=simple tls_reqcert=never credentials={{ slapd_root_pass | default('changeme') }} searchbase="cn=config"
+  bindmethod=simple tls_reqcert=never credentials={{ slapd_root_pass }} searchbase="cn=config"
   type=refreshAndPersist retry="5 5 300 5" timeout=5
 {% endfor %}
 -

@@ -13,7 +13,7 @@
   when: slapd_ssl | bool
 
 - name: Hash OpenLDAP password.
-  command: 'slappasswd -s {{ slapd_root_pass | default("changeme") }}'
+  command: 'slappasswd -s {{ slapd_root_pass }}'
   register: slapd_root_pass_out
   when: slapd_servers[0] in ansible_default_ipv4.address
   no_log: true

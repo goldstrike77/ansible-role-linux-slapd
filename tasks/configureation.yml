@@ -18,18 +18,32 @@
 
 - name: Certificates LDAP Data Interchange Files transfer.
   template:
-    src: '{{ item }}.ldif.j2'
-    dest: '/tmp/{{ item }}.ldif'
+    src: 'certs.ldif.j2'
+    dest: '/tmp/certs.ldif'
     owner: 'ldap'
     group: 'ldap'
     mode: '0644'
-  loop: '{{ slapd_cert_ldif }}'
   when: slapd_ssl | bool
 
 - name: Enable the OpenLDAP TLS Configuration.
   command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/certs.ldif'
   when: slapd_ssl | bool
   register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Root password LDAP Data Interchange Files transfer.
+  template:
+    src: 'olcdatabase.ldif.j2'
+    dest: '/tmp/olcdatabase.ldif'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0644'
+
+- name: Modify root password for OpenLDAP.
+  command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabase.ldif'
   failed_when:
     - "'already exists' not in slapd_conf_status.stdout"
     - "'modifying entry' not in slapd_conf_status.stdout"

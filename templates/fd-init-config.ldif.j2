@@ -1,7 +1,6 @@
 dn: ou=fusiondirectory,dc={{ datacenter }},dc={{ domain }}
 ou: fusiondirectory
 objectClass: organizationalUnit
-structuralObjectClass: organizationalUnit
 
 dn: cn=config,ou=fusiondirectory,dc={{ datacenter }},dc={{ domain }}
 objectClass: fusionDirectoryConf
@@ -47,5 +46,4 @@ fdDebugLevel: 0
 fdListSummary: TRUE
 fdAclTabOnObjects: FALSE
 fdDisplayHookOutput: FALSE
-structuralObjectClass: fusionDirectoryConf
 cn: config

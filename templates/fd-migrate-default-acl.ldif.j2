@@ -4,7 +4,6 @@ description: Give all rights on users in the given branch
 objectClass: top
 objectClass: gosaRole
 gosaAclTemplate: 0:user/user;cmdrw,user/posixAccount;cmdrw
-structuralObjectClass: gosaRole
 
 dn: cn=editowninfos,ou=aclroles,dc={{ datacenter }},dc={{ domain }}
 cn: editowninfos
@@ -13,7 +12,6 @@ description: Allow users to edit their own information (main tab and posix u
 objectClass: top
 objectClass: gosaRole
 gosaAclTemplate: 0:user/user;srw,user/posixAccount;srw
-structuralObjectClass: gosaRole
 
 dn: cn=editownpwd,ou=aclroles,dc={{ datacenter }},dc={{ domain }}
 cn: editownpwd
@@ -21,4 +19,3 @@ description: Allow users to edit their own password (use only on base)
 objectClass: top
 objectClass: gosaRole
 gosaAclTemplate: 0:user/user;s#userPassword;rw
-structuralObjectClass: gosaRole

@@ -1,3 +1,4 @@
 dn: olcDatabase={0}config,cn=config
-add: olcRootPW
+changetype: modify
+replace: olcRootPW
 olcRootPW: {{ slapd_root_pass_hash }}

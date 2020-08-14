@@ -16,7 +16,7 @@
     - name: Calculate FusionDirectory Configuration hash.
       stat:
         path: '/var/cache/fusiondirectory/class.cache'
-        get_md5: 'yes'
+        checksum_algorithm: 'md5'
       register: slapd_fd_config_hash  
     - name: FusionDirectory Data Interchange Files transfer.
       template:

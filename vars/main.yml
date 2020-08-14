@@ -6,13 +6,9 @@ slapd_servers: "\
   {% endfor %}\
   {{ _slapd_servers }}"
 
-slapd_cert_ldif:
-  - 'certs'
-
 slapd_repl_ldif:
   - 'syncprov_mod'
   - 'olcserverid'
-  - 'olcdatabase'
   - 'configrep'
 
 slapd_conf_ldif:
