@@ -1,0 +1,10 @@
+dn: dc={{ datacenter }},dc={{ domain }}
+changetype: modify
+add: objectClass
+objectClass: gosaDepartment
+-
+add: ou
+ou: {{ datacenter }}
+-
+add: description
+description: {{ datacenter }}

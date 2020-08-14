@@ -21,6 +21,11 @@ slapd_conf_ldif:
   - 'monitor'
   - 'base'
 
+slapd_conf_fd_ldif:
+  - 'fd-init-config'
+  - 'fd-migrate-object-classes'
+  - 'fd-migrate-default-acl'
+
 slapd_conf_schema:
   - 'cosine'
   - 'nis'

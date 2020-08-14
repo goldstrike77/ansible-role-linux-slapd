@@ -12,3 +12,33 @@
   until: slapd_yum_status is succeeded
   retries: 5
   delay: 2
+
+- name: Fusiondirectory installation operation.
+  block:
+    - name: Add Fusiondirectory YUM repositories.
+      yum_repository:
+        name: '{{ slapd_fd_repo_name }}'
+        description: '{{ slapd_fd_repo_name }} YUM repository'
+        file: '{{ slapd_fd_repo_name }}'
+        baseurl: '{{ slapd_fd_repo_url }}'
+        gpgcheck: 'no'
+        timeout: '60'
+    - name: Add Fusiondirectory Extra YUM repositories.
+      yum_repository:
+        name: '{{ slapd_fd_extra_repo_name }}'
+        description: '{{ slapd_fd_extra_repo_name }} YUM repository'
+        file: '{{ slapd_fd_extra_repo_name }}'
+        baseurl: '{{ slapd_fd_extra_repo_url }}'
+        gpgcheck: 'no'
+        timeout: '60'
+    - name: Install the Fusiondirectory packages.
+      yum:
+        name: '{{ slapd_fd_packages }}'
+        state: 'present'
+        validate_certs: 'no'
+        disable_gpg_check: 'yes'
+      register: slapd_fd_yum_status
+      until: slapd_fd_yum_status is succeeded
+      retries: 5
+      delay: 2
+  when: slapd_fd_dept | bool

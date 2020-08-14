@@ -1,0 +1,53 @@
+---
+- name: FusionDirectory Schema setup.
+  command: 'fusiondirectory-insert-schema'
+
+- name: FusionDirectory Configuration Files transfer.
+  template:
+    src: 'fusiondirectory.conf.j2'
+    dest: '/etc/fusiondirectory/fusiondirectory.conf'
+    owner: 'root'
+    group: 'apache'
+    mode: '0640'
+  no_log: true
+
+- name: Fusiondirectory installation operation.
+  block:
+    - name: Calculate FusionDirectory Configuration hash.
+      stat:
+        path: '/var/cache/fusiondirectory/class.cache'
+        get_md5: 'yes'
+      register: slapd_fd_config_hash  
+    - name: FusionDirectory Data Interchange Files transfer.
+      template:
+        src: '{{ item }}.ldif.j2'
+        dest: '/tmp/{{ item }}.ldif'
+        owner: 'ldap'
+        group: 'ldap'
+        mode: '0644'
+      loop: '{{ slapd_conf_fd_ldif }}'
+      no_log: true
+    - name: Generate the Initial FusionDirectory configuration.
+      command: 'ldapadd -x -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -w {{ slapd_root_pass }} -H ldapi:/// -f /tmp/fd-init-config.ldif'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+    - name: Migrate FusionDirectory Object Classes.
+      command: 'ldapmodify -x -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -w {{ slapd_root_pass }} -H ldapi:/// -f /tmp/fd-migrate-object-classes.ldif'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+    - name: Set FusionDirectory SuperUser Password.
+      command: 'ldappasswd -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -w {{ slapd_root_pass }} -s {{ slapd_fd_pass }} uid={{ slapd_fd_user }},ou=people,dc={{ datacenter }},dc={{ domain }} -H ldapi:///'
+    - name: Migrate FusionDirectory Defaults ACLs.
+      command: 'ldapmodify -x -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -w {{ slapd_root_pass }} -H ldapi:/// -f /tmp/fd-migrate-default-acl.ldif'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+  when: slapd_servers[0] in ansible_default_ipv4.address

@@ -33,7 +33,7 @@
     - "'adding new entry' not in slapd_conf_status.stdout"
 
 - name: Build the directory structure for your domain.
-  command: 'ldapadd -x -w {{ slapd_root_pass | default("changeme") }} -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -H ldapi:// -f /tmp/base.ldif'
+  command: 'ldapadd -x -w {{ slapd_root_pass | default("changeme") }} -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -H ldapi:/// -f /tmp/base.ldif'
   register: slapd_conf_status
   failed_when:
     - "'already exists' not in slapd_conf_status.stdout"

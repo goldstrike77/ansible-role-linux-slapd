@@ -1,0 +1,51 @@
+dn: ou=fusiondirectory,dc={{ datacenter }},dc={{ domain }}
+ou: fusiondirectory
+objectClass: organizationalUnit
+structuralObjectClass: organizationalUnit
+
+dn: cn=config,ou=fusiondirectory,dc={{ datacenter }},dc={{ domain }}
+objectClass: fusionDirectoryConf
+fdTheme: breezy
+fdTimezone: {{ slapd_fd_tz }}
+fusionConfigMd5: {{ slapd_fd_config_hash.stat.md5 }}
+fdLdapSizeLimit: 200
+fdModificationDetectionAttribute: entryCSN
+fdLogging: TRUE
+fdSchemaCheck: TRUE
+fdEnableSnapshots: TRUE
+fdSnapshotBase: ou=snapshots,dc={{ datacenter }},dc={{ domain }}
+fdWildcardForeignKeys: TRUE
+fdPasswordDefaultHash: {{ slapd_fd_pass_hash }}
+fdForcePasswordDefaultHash: FALSE
+fdPasswordMinLength: {{ slapd_fd_pass_minlength }}
+fdHandleExpiredAccounts: FALSE
+fdLoginAttribute: uid
+fdForceSSL: FALSE
+fdWarnSSL: TRUE
+fdSessionLifeTime: 1800
+fdHttpAuthActivated: FALSE
+fdHttpHeaderAuthActivated: FALSE
+fdHttpHeaderAuthHeaderName: AUTH_USER
+fdSslKeyPath: /etc/ssl/private/fd.key
+fdSslCertPath: /etc/ssl/certs/fd.cert
+fdSslCaCertPath: /etc/ssl/certs/ca.cert
+fdCasActivated: FALSE
+fdCasServerCaCertPath: /etc/ssl/certs/ca.cert
+fdCasHost: localhost
+fdCasPort: 443
+fdCasContext: /cas
+fdAccountPrimaryAttribute: uid
+fdCnPattern: %givenName% %sn%
+fdStrictNamingRules: TRUE
+fdUserRDN: ou=people
+fdAclRoleRDN: ou=aclroles
+fdRestrictRoleMembers: FALSE
+fdSplitPostalAddress: FALSE
+fdDisplayErrors: FALSE
+fdLdapStats: FALSE
+fdDebugLevel: 0
+fdListSummary: TRUE
+fdAclTabOnObjects: FALSE
+fdDisplayHookOutput: FALSE
+structuralObjectClass: fusionDirectoryConf
+cn: config

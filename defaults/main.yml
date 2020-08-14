@@ -2,13 +2,22 @@
 # General parameters #
 slapd_is_install: false # A boolean value, whether install the HashiCorp Vault.
 slapd_root_user: 'ldapadm' # Specify the DN to access control or administrative restrictions for operations.
-slapd_root_pass: 'changeme' # Specify a password for the DN for the rootdn.
+slapd_root_pass: 'v9rJsZFtHTmW' # Specify a password for the DN for the rootdn.
 slapd_ssl: true # A boolean value, whether Encrypting client and cluster communications.
 
 # Listen port #
 slapd_port_arg: # Defines communication port.
   ldap: '389'
   ldaps: '636'
+
+# Fusiondirectory parameters #
+slapd_fd_dept: true # A boolean value, whether to use FusionDirectory for management of data stored in an LDAP directory.
+slapd_fd_php_version: '73' # Specify the php-fpm version.
+slapd_fd_user: 'fd-admin' # Specify the Fusiondirectory administrator username.
+slapd_fd_pass: 'JZjL9DWmBdJw' # Specify the Fusiondirectory administrator password.
+slapd_fd_tz: 'Asia/Shanghai'
+slapd_fd_pass_hash: 'crypt/sha-512'
+slapd_fd_pass_minlength: '12'
 
 # Service Mesh #
 environments: 'Development' # Define the service environment.
