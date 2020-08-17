@@ -34,8 +34,3 @@ slapd_pypi_url: 'pypi.tuna.tsinghua.edu.cn'
 slapd_python_dependent_packages:
   - 'pip'
   - 'cryptography'
-
-slapd_error_msg:
-  - 'already exists'
-  - 'modifying entry'
-  - 'adding new entry'
