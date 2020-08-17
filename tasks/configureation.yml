@@ -8,6 +8,16 @@
     group: 'ldap'
   register: slapd_db_config
 
+- name: LDAP Data Interchange Files transfer.
+  template:
+    src: '{{ item }}.ldif.j2'
+    dest: '/tmp/{{ item }}.ldif'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0644'
+  loop: '{{ slapd_conf_ldif }}'
+  no_log: true
+
 - name: Reload the OpenLDAP service.
   shell: echo ''
   notify: 'Ensure OpenLDAP service is enabled'
@@ -16,38 +26,20 @@
 - name: Force the handler to run immediately.
   meta: flush_handlers
 
-- name: Certificates LDAP Data Interchange Files transfer.
-  template:
-    src: 'certs.ldif.j2'
-    dest: '/tmp/certs.ldif'
-    owner: 'ldap'
-    group: 'ldap'
-    mode: '0644'
-  when: slapd_ssl | bool
+- name: Waits for OpenLDAP service startup.
+  wait_for:
+    host: '{{ ansible_default_ipv4.address }}'
+    port: '{{ slapd_port_arg.ldap }}'
+    delay: '2'
 
 - name: Enable the OpenLDAP TLS Configuration.
   command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/certs.ldif'
-  when: slapd_ssl | bool
   register: slapd_conf_status
   failed_when:
     - "'already exists' not in slapd_conf_status.stdout"
     - "'modifying entry' not in slapd_conf_status.stdout"
     - "'adding new entry' not in slapd_conf_status.stdout"
-
-- name: Root password LDAP Data Interchange Files transfer.
-  template:
-    src: 'olcdatabase.ldif.j2'
-    dest: '/tmp/olcdatabase.ldif'
-    owner: 'ldap'
-    group: 'ldap'
-    mode: '0644'
-
-- name: Modify root password for OpenLDAP.
-  command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabase.ldif'
-  failed_when:
-    - "'already exists' not in slapd_conf_status.stdout"
-    - "'modifying entry' not in slapd_conf_status.stdout"
-    - "'adding new entry' not in slapd_conf_status.stdout"
+  when: slapd_ssl | bool
 
 - name: OpenLDAP configuration file transfer.
   template:
@@ -65,3 +57,71 @@
 
 - name: Force the handler to run immediately.
   meta: flush_handlers
+
+- name: Waits for OpenLDAP service startup.
+  wait_for:
+    host: '{{ ansible_default_ipv4.address }}'
+    port: '{{ slapd_port_arg.ldap }}'
+    delay: '2'
+
+- name: Enable the OpenLDAP syncprov module.
+  command: 'ldapadd -Y EXTERNAL -H ldapi:// -f /tmp/syncprov_mod.ldif'
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Change the olcServerID on all servers.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcserverid.ldif'
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Modify root password for OpenLDAP.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabase.ldif'
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Configure replication on all servers.
+  command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/configrep.ldif'
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
+
+- name: Enable Database operation.
+  block:
+    - name: Enable syncprov for hdb database.
+      command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/syncprov.ldif'
+    - name: Configure hdb database.
+      command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/olcdatabasehdb.ldif'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+    - name: Restrict the monitor access only to LDAP root.
+      command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/monitor.ldif'
+    - name: Add the OpenLDAP schemas.
+      command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ item }}.ldif'
+      loop: '{{ slapd_conf_schema }}'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+    - name: Build the directory structure for your domain.
+      command: 'ldapadd -x -w {{ slapd_root_pass }} -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -H ldapi:/// -f /tmp/base.ldif'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+  when: slapd_servers[0] in ansible_default_ipv4.address

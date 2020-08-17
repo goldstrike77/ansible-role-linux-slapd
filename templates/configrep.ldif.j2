@@ -8,7 +8,6 @@ olcServerID: {{ loop.index }} {% if slapd_ssl | bool %}ldaps{% else %}ldap{% end
 {% endfor %}
 
 ### Enable Config Replication###
-
 dn: olcOverlay=syncprov,olcDatabase={0}config,cn=config
 changetype: add
 objectClass: olcOverlayConfig

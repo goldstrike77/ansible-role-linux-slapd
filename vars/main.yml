@@ -6,16 +6,16 @@ slapd_servers: "\
   {% endfor %}\
   {{ _slapd_servers }}"
 
-slapd_repl_ldif:
-  - 'syncprov_mod'
-  - 'olcserverid'
-  - 'configrep'
-
 slapd_conf_ldif:
-  - 'syncprov'
-  - 'olcdatabasehdb'
-  - 'monitor'
   - 'base'
+  - 'certs'
+  - 'configrep'
+  - 'monitor'
+  - 'olcdatabase'
+  - 'olcdatabasehdb'
+  - 'olcserverid'
+  - 'syncprov'
+  - 'syncprov_mod'
 
 slapd_conf_fd_ldif:
   - 'fd-init-config'
@@ -34,3 +34,8 @@ slapd_pypi_url: 'pypi.tuna.tsinghua.edu.cn'
 slapd_python_dependent_packages:
   - 'pip'
   - 'cryptography'
+
+slapd_error_msg:
+  - 'already exists'
+  - 'modifying entry'
+  - 'adding new entry'

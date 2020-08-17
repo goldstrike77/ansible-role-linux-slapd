@@ -6,7 +6,7 @@ dn: cn=config,ou=fusiondirectory,dc={{ datacenter }},dc={{ domain }}
 objectClass: fusionDirectoryConf
 fdTheme: breezy
 fdTimezone: {{ slapd_fd_tz }}
-fusionConfigMd5: {{ slapd_fd_config_hash.stat.md5 }}
+fusionConfigMd5: {{ slapd_fd_config_hash.stat.checksum }}
 fdLdapSizeLimit: 200
 fdModificationDetectionAttribute: entryCSN
 fdLogging: TRUE

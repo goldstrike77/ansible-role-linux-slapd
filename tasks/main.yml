@@ -29,14 +29,6 @@
 - name: Configuration the OpenLDAP.
   include: 'configureation.yml'
 
-- name: Include replication tasks.
-  include: 'replication.yml'
-  when: slapd_servers | length > 1
-
-- name: Include database tasks.
-  include: 'database.yml'
-  when: slapd_servers[0] in ansible_default_ipv4.address
-
 - name: Include Fusiondirectory tasks.
   include: 'fusiondirectory.yml'
   when: slapd_fd_dept | bool

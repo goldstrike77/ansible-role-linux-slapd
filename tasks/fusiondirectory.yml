@@ -1,6 +1,11 @@
 ---
 - name: FusionDirectory Schema setup.
   command: 'fusiondirectory-insert-schema'
+  register: slapd_conf_status
+  failed_when:
+    - "'already exists' not in slapd_conf_status.stdout"
+    - "'modifying entry' not in slapd_conf_status.stdout"
+    - "'adding new entry' not in slapd_conf_status.stdout"
 
 - name: FusionDirectory Configuration Files transfer.
   template:
@@ -41,10 +46,13 @@
         - "'already exists' not in slapd_conf_status.stdout"
         - "'modifying entry' not in slapd_conf_status.stdout"
         - "'adding new entry' not in slapd_conf_status.stdout"
+    - name: Generate FusionDirectory SuperUser and OUs.
+      shell: |
+        yes '{{ slapd_fd_user }}' | fusiondirectory-setup --yes --check-ldap
     - name: Set FusionDirectory SuperUser Password.
       command: 'ldappasswd -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -w {{ slapd_root_pass }} -s {{ slapd_fd_pass }} uid={{ slapd_fd_user }},ou=people,dc={{ datacenter }},dc={{ domain }} -H ldapi:///'
     - name: Migrate FusionDirectory Defaults ACLs.
-      command: 'ldapmodify -x -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -w {{ slapd_root_pass }} -H ldapi:/// -f /tmp/fd-migrate-default-acl.ldif'
+      command: 'ldapadd -x -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -w {{ slapd_root_pass }} -H ldapi:/// -f /tmp/fd-migrate-default-acl.ldif'
       register: slapd_conf_status
       failed_when:
         - "'already exists' not in slapd_conf_status.stdout"

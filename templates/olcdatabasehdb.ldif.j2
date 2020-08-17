@@ -9,7 +9,6 @@ olcRootDN: cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}
 replace: olcRootPW
 olcRootPW: {{ slapd_root_pass_hash }}
 -
-{% if slapd_servers | length > 1 %}
 add: olcSyncRepl
 {% for host in slapd_servers %}
 olcSyncRepl: rid=00{{ loop.index + slapd_servers | length }} provider={% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }} binddn="cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" bindmethod=simple
@@ -17,7 +16,6 @@ olcSyncRepl: rid=00{{ loop.index + slapd_servers | length }} provider={% if slap
   interval=00:00:00:10 retry="5 5 300 5" timeout=5
 {% endfor %}
 -
-{% endif %}
 add: olcDbIndex
 olcDbIndex: entryUUID  eq
 -

@@ -14,19 +14,9 @@ ou: people
 
 dn: ou=group,dc={{ datacenter }},dc={{ domain }}
 objectClass: organizationalUnit
+objectClass: gosaDepartment
 ou: group
 
 dn: ou=aclroles,dc={{ datacenter }},dc={{ domain }}
 objectClass: organizationalUnit
 ou: aclroles
-
-{% if slapd_fd_dept | bool %}
-dn: uid={{ slapd_fd_user }},ou=people,dc={{ datacenter }},dc={{ domain }}
-objectClass: inetOrgPerson
-objectClass: organizationalPerson
-objectClass: person
-cn: System Administrator
-sn: Administrator
-givenName: System
-uid: {{ slapd_fd_user }}
-{% endif %}
