@@ -1,9 +1,16 @@
 ---
-- name: Copy the sample database configuration file.
-  copy:
-    src: '/usr/share/openldap-servers/DB_CONFIG.example'
+- name: Creating OpenLDAP database and logs storage directory.
+  file:
+    dest: '{{ slapd_path }}/ldap'
+    state: 'directory'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0750'
+
+- name: Database configuration transfer.
+  template:
+    src: 'DB_CONFIG.j2'
     dest: '/var/lib/ldap/DB_CONFIG'
-    remote_src: 'yes'
     owner: 'ldap'
     group: 'ldap'
   register: slapd_db_config
@@ -109,7 +116,14 @@
         - "'already exists' not in slapd_conf_status.stdout"
         - "'modifying entry' not in slapd_conf_status.stdout"
         - "'adding new entry' not in slapd_conf_status.stdout"
-    - name: Restrict the monitor access only to LDAP root.
+    - name: Create monitor user.
+      command: 'ldapadd -x -w {{ slapd_root_pass }} -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -H ldapi:/// -f /tmp/cn_monitor.ldif'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+    - name: Restrict the monitor access only to monitor.
       command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/monitor.ldif'
     - name: Add the OpenLDAP schemas.
       command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ item }}.ldif'

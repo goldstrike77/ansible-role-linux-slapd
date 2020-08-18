@@ -12,16 +12,30 @@
   include: 'certificates.yml'
   when: slapd_ssl | bool
 
-- name: Hash OpenLDAP password.
+- name: Hash OpenLDAP root password.
   command: 'slappasswd -s {{ slapd_root_pass }}'
   register: slapd_root_pass_out
   when: slapd_servers[0] in ansible_default_ipv4.address
   no_log: true
 
-- name: Set the OpenLDAP password hash.
+- name: Set the OpenLDAP root password hash.
   set_fact:
     slapd_root_pass_hash: '{{ slapd_root_pass_out.stdout }}'
   when: slapd_root_pass_out.stdout is defined
+  delegate_to: '{{ item }}'
+  delegate_facts: true
+  loop: '{{ groups[group_names[-1]] }}'
+
+- name: Hash OpenLDAP monitor password.
+  command: "slappasswd -s {{ lookup('password', '' + group_names[-1] + ':backup length=12 chars=ascii_letters,digits') }}"
+  register: slapd_monitor_pass_out
+  when: slapd_servers[0] in ansible_default_ipv4.address
+  no_log: true
+
+- name: Set the OpenLDAP monitor password hash.
+  set_fact:
+    slapd_monitor_pass_hash: '{{ slapd_monitor_pass_out.stdout }}'
+  when: slapd_monitor_pass_out.stdout is defined
   delegate_to: '{{ item }}'
   delegate_facts: true
   loop: '{{ groups[group_names[-1]] }}'
@@ -32,3 +46,13 @@
 - name: Include Fusiondirectory tasks.
   include: 'fusiondirectory.yml'
   when: slapd_fd_dept | bool
+
+- name: Include prometheus exporter tasks.
+  include: 'exporter.yml'
+  when: exporter_is_install | bool
+
+- name: Registered with HashiCorp Consul.
+  include: 'register.yml'
+  when:
+    - exporter_is_install | bool
+    - consul_public_register | bool

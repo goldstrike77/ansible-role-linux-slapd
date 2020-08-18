@@ -1,0 +1,1 @@
+SLAPD_EXPORTER_OPTS='--promAddr "{{ ansible_default_ipv4.address }}:{{ slapd_port_arg.exporter }}" --ldapAddr "{{ ansible_default_ipv4.address }}:{{ slapd_port_arg.ldap }}" --ldapUser "cn=monitor,dc={{ datacenter }},dc={{ domain }}" --ldapPass "{{ lookup('password', '' + group_names[-1] + ':backup length=12 chars=ascii_letters,digits') }}" --interval 60s'

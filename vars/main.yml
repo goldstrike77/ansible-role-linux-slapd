@@ -9,6 +9,7 @@ slapd_servers: "\
 slapd_conf_ldif:
   - 'base'
   - 'certs'
+  - 'cn_monitor'
   - 'configrep'
   - 'monitor'
   - 'olcdatabase'

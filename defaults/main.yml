@@ -1,14 +1,16 @@
 ---
 # General parameters #
-slapd_is_install: false # A boolean value, whether install the HashiCorp Vault.
+slapd_is_install: false # A boolean value, whether install the OpenLDAP.
 slapd_root_user: 'ldapadm' # Specify the DN to access control or administrative restrictions for operations.
 slapd_root_pass: 'v9rJsZFtHTmW' # Specify a password for the DN for the rootdn.
 slapd_ssl: true # A boolean value, whether Encrypting client and cluster communications.
+slapd_path: '/data' # Specify the OpenLDAP database and logs main-directory.
 
 # Listen port #
 slapd_port_arg: # Defines communication port.
   ldap: '389'
   ldaps: '636'
+  exporter: '9330'
 
 # Fusiondirectory parameters #
 slapd_fd_dept: true # A boolean value, whether to use FusionDirectory for management of data stored in an LDAP directory.

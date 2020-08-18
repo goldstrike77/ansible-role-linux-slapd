@@ -1,14 +1,9 @@
 ---
-- name: Get the list from current pip packages.
-  pip_package_info:
-  register: slapd_pip_packages
-
 - name: Install requirement python package.
   pip:
     name: '{{ slapd_python_dependent_packages }}'
     state: 'forcereinstall'
     extra_args: '--default-timeout=120 --ignore-installed -i https://{{ slapd_pypi_url }}/simple --trusted-host {{ slapd_pypi_url }}'
-  when: '"cryptography" not in slapd_pip_packages.packages.pip'
   register: slapd_python_status
   until: slapd_python_status is succeeded
   retries: 5
@@ -48,7 +43,7 @@
         subject_alt_name:
           - 'DNS:{{ ansible_hostname }}'
           - 'DNS:{{ ansible_fqdn }}'
-          - 'DNS:{{ group_names[-1] | upper | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-ldap.service.{{ datacenter | lower }}.{{ domain | lower }}'
+          - 'DNS:{{ group_names[-1] | upper | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-slapd.service.{{ datacenter | lower }}.{{ domain | lower }}'
           - 'IP:{{ ansible_default_ipv4.address }}'
         owner: 'ldap'
         mode: '0640'

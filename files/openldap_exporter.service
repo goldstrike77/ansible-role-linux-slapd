@@ -1,0 +1,14 @@
+[Unit]
+Description=Prometheus OpenLDAP exporter.
+Documentation=https://github.com/tomcz/openldap_exporter
+After=network.target
+
+[Service]
+EnvironmentFile=-/etc/default/openldap_exporter
+User=nobody
+Group=nobody
+ExecStart=/usr/local/bin/openldap_exporter $SLAPD_EXPORTER_OPTS
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

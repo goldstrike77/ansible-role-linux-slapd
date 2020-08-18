@@ -1,0 +1,35 @@
+---
+- name: OpenLDAP exporter program binary transfer.
+  unarchive:
+    src: 'openldap_exporter.tar.xz'
+    dest: '/usr/local/bin'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  register: openldap_exporter_update
+
+- name: OpenLDAP exporter configure file transfer.
+  template:
+    src: 'openldap_exporter.default.j2'
+    dest: '/etc/default/openldap_exporter'
+    owner: 'nobody'
+    group: 'nobody'
+    mode: '0640'
+  register: openldap_exporter_config
+
+- name: OpenLDAP exporter service file transfer.
+  copy:
+    src: 'openldap_exporter.service'
+    dest: '/lib/systemd/system'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  register: openldap_exporter_systemd_update
+
+- name: Reloading the OpenLDAP exporter service.
+  systemd:
+    name: 'openldap_exporter.service'
+    enabled: 'yes'
+    state: 'restarted'
+    daemon_reload: 'yes'
+  when: openldap_exporter_config is changed or openldap_exporter_systemd_update is changed or openldap_exporter_update is changed
