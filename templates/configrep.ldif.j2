@@ -6,6 +6,7 @@ replace: olcServerID
 {% for host in slapd_servers %}
 olcServerID: {{ loop.index }} {% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }}
 {% endfor %}
+{% if slapd_servers | length > 1 %}
 
 ### Enable Config Replication###
 dn: olcOverlay=syncprov,olcDatabase={0}config,cn=config
@@ -27,3 +28,4 @@ olcSyncRepl: rid=00{{ loop.index }} provider={% if slapd_ssl | bool %}ldaps{% el
 -
 add: olcMirrorMode
 olcMirrorMode: TRUE
+{% endif %}

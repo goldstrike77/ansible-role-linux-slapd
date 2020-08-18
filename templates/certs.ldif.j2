@@ -1,5 +1,15 @@
 dn: cn=config
 changetype: modify
+replace: olcTLSProtocolMin
+olcTLSProtocolMin: 3.3
+
+dn: cn=config
+changetype: modify
+replace: olcTLSCipherSuite
+olcTLSCipherSuite: ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL
+
+dn: cn=config
+changetype: modify
 replace: olcTLSCACertificateFile
 olcTLSCACertificateFile: {{ slapd_cert_path }}/ca-cert.pem
 

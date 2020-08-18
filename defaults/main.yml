@@ -15,9 +15,10 @@ slapd_fd_dept: true # A boolean value, whether to use FusionDirectory for manage
 slapd_fd_php_version: '73' # Specify the php-fpm version.
 slapd_fd_user: 'fd-admin' # Specify the Fusiondirectory administrator username.
 slapd_fd_pass: 'JZjL9DWmBdJw' # Specify the Fusiondirectory administrator password.
-slapd_fd_tz: 'Asia/Shanghai'
-slapd_fd_pass_hash: 'crypt/sha-512'
-slapd_fd_pass_minlength: '12'
+slapd_fd_tz: 'Asia/Shanghai' # Defines the timezone used within FusionDirectory to handle date related tasks.
+slapd_fd_pass_hash: 'crypt/sha-512' # Defines the default password hash to choose for new accounts.
+slapd_fd_pass_min_length: '12' # Determines the minimum length of a new password entered to be considered valid.
+slapd_fd_pass_min_differ: '1' # Determines how many characters that must be different from the previous password.
 
 # Service Mesh #
 environments: 'Development' # Define the service environment.

@@ -15,8 +15,9 @@ fdEnableSnapshots: TRUE
 fdSnapshotBase: ou=snapshots,dc={{ datacenter }},dc={{ domain }}
 fdWildcardForeignKeys: TRUE
 fdPasswordDefaultHash: {{ slapd_fd_pass_hash }}
-fdForcePasswordDefaultHash: FALSE
-fdPasswordMinLength: {{ slapd_fd_pass_minlength }}
+fdForcePasswordDefaultHash: TRUE
+fdPasswordMinDiffer: {{ slapd_fd_pass_min_differ }}
+fdPasswordMinLength: {{ slapd_fd_pass_min_length }}
 fdHandleExpiredAccounts: FALSE
 fdLoginAttribute: uid
 fdForceSSL: FALSE

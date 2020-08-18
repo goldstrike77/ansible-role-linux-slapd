@@ -66,6 +66,7 @@
 
 - name: Enable the OpenLDAP syncprov module.
   command: 'ldapadd -Y EXTERNAL -H ldapi:// -f /tmp/syncprov_mod.ldif'
+  when: slapd_servers | length > 1
   register: slapd_conf_status
   failed_when:
     - "'already exists' not in slapd_conf_status.stdout"
@@ -100,6 +101,7 @@
   block:
     - name: Enable syncprov for hdb database.
       command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/syncprov.ldif'
+      when: slapd_servers | length > 1
     - name: Configure hdb database.
       command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/olcdatabasehdb.ldif'
       register: slapd_conf_status

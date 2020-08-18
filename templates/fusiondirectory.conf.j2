@@ -18,7 +18,7 @@
     <!-- Location definition -->
     <location name="default"
     >
-        <referral URI="ldap://{{ ansible_default_ipv4.address }}:{{slapd_port_arg.ldap}}" base="dc={{ datacenter }},dc={{ domain }}"
+        <referral URI="ldapi:///" base="dc={{ datacenter }},dc={{ domain }}"
                         adminDn="cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}"
                         adminPassword="{{ slapd_root_pass }}" />
     </location>
