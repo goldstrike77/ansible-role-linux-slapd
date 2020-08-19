@@ -8,6 +8,13 @@ objectClass: organizationalRole
 cn: {{ slapd_root_user }}
 description: LDAP Manager
 
+dn: cn=monitor,dc={{ datacenter }},dc={{ domain }}
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: monitor
+description: LDAP monitor
+userPassword: {{ slapd_monitor_pass_hash }}
+
 dn: ou=people,dc={{ datacenter }},dc={{ domain }}
 objectClass: organizationalUnit
 ou: people

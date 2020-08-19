@@ -12,8 +12,8 @@
   template:
     src: 'openldap_exporter.default.j2'
     dest: '/etc/default/openldap_exporter'
-    owner: 'nobody'
-    group: 'nobody'
+    owner: 'ldap'
+    group: 'ldap'
     mode: '0640'
   register: openldap_exporter_config
 

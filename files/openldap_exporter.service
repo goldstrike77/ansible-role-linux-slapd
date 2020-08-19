@@ -5,8 +5,8 @@ After=network.target
 
 [Service]
 EnvironmentFile=-/etc/default/openldap_exporter
-User=nobody
-Group=nobody
+User=ldap
+Group=ldap
 ExecStart=/usr/local/bin/openldap_exporter $SLAPD_EXPORTER_OPTS
 Restart=on-failure
 

@@ -1,14 +1,4 @@
 ---
-- name: Install requirement python package.
-  pip:
-    name: '{{ slapd_python_dependent_packages }}'
-    state: 'forcereinstall'
-    extra_args: '--default-timeout=120 --ignore-installed -i https://{{ slapd_pypi_url }}/simple --trusted-host {{ slapd_pypi_url }}'
-  register: slapd_python_status
-  until: slapd_python_status is succeeded
-  retries: 5
-  delay: 2
-
 - name: Check private key exists.
   stat:
     path: '{{ slapd_cert_path }}/server.key'
@@ -16,6 +6,15 @@
 
 - name: Certificate Signing operation.
   block:
+    - name: Install requirement python package.
+      pip:
+        name: '{{ slapd_python_dependent_packages }}'
+        state: 'forcereinstall'
+        extra_args: '--default-timeout=120 --ignore-installed -i https://{{ slapd_pypi_url }}/simple --trusted-host {{ slapd_pypi_url }}'
+      register: slapd_python_status
+      until: slapd_python_status is succeeded
+      retries: 5
+      delay: 2
     - name: Selfsigned CA file transfer.
       copy:
         src: 'ssl/{{ item }}'

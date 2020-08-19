@@ -15,7 +15,7 @@
     group: 'ldap'
   register: slapd_db_config
 
-- name: LDAP Data Interchange Files transfer.
+- name: LDAP Data Interchange files transfer.
   template:
     src: '{{ item }}.ldif.j2'
     dest: '/tmp/{{ item }}.ldif'
@@ -23,7 +23,6 @@
     group: 'ldap'
     mode: '0644'
   loop: '{{ slapd_conf_ldif }}'
-  no_log: true
 
 - name: Reload the OpenLDAP service.
   shell: echo ''
@@ -88,7 +87,7 @@
     - "'modifying entry' not in slapd_conf_status.stdout"
     - "'adding new entry' not in slapd_conf_status.stdout"
 
-- name: Modify root password for OpenLDAP.
+- name: Change root password.
   command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabase.ldif'
   register: slapd_conf_status
   failed_when:
@@ -96,7 +95,7 @@
     - "'modifying entry' not in slapd_conf_status.stdout"
     - "'adding new entry' not in slapd_conf_status.stdout"
 
-- name: Configure replication on all servers.
+- name: Server configuration.
   command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/configrep.ldif'
   register: slapd_conf_status
   failed_when:
@@ -116,14 +115,7 @@
         - "'already exists' not in slapd_conf_status.stdout"
         - "'modifying entry' not in slapd_conf_status.stdout"
         - "'adding new entry' not in slapd_conf_status.stdout"
-    - name: Create monitor user.
-      command: 'ldapadd -x -w {{ slapd_root_pass }} -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -H ldapi:/// -f /tmp/cn_monitor.ldif'
-      register: slapd_conf_status
-      failed_when:
-        - "'already exists' not in slapd_conf_status.stdout"
-        - "'modifying entry' not in slapd_conf_status.stdout"
-        - "'adding new entry' not in slapd_conf_status.stdout"
-    - name: Restrict the monitor access only to monitor.
+    - name: Restrict the monitor permissions are given to only allowed monitoring users.
       command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/monitor.ldif'
     - name: Add the OpenLDAP schemas.
       command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ item }}.ldif'
@@ -141,3 +133,12 @@
         - "'modifying entry' not in slapd_conf_status.stdout"
         - "'adding new entry' not in slapd_conf_status.stdout"
   when: slapd_servers[0] in ansible_default_ipv4.address
+
+- name: Remove the LDAP Data Interchange files.
+  file:
+    path: '/tmp/{{ item }}.ldif'
+    state: 'absent'
+  when: slapd_ldif_clean | bool
+  changed_when: false
+  failed_when: false
+  loop: '{{ slapd_conf_ldif }}'

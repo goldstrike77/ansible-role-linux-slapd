@@ -15,12 +15,26 @@ slapd_port_arg: # Defines communication port.
 # Fusiondirectory parameters #
 slapd_fd_dept: true # A boolean value, whether to use FusionDirectory for management of data stored in an LDAP directory.
 slapd_fd_php_version: '73' # Specify the php-fpm version.
+slapd_fd_php_fpm_port: '9000' # Defines Php-fpm instance listening port.
 slapd_fd_user: 'fd-admin' # Specify the Fusiondirectory administrator username.
 slapd_fd_pass: 'JZjL9DWmBdJw' # Specify the Fusiondirectory administrator password.
 slapd_fd_tz: 'Asia/Shanghai' # Defines the timezone used within FusionDirectory to handle date related tasks.
 slapd_fd_pass_hash: 'crypt/sha-512' # Defines the default password hash to choose for new accounts.
 slapd_fd_pass_min_length: '12' # Determines the minimum length of a new password entered to be considered valid.
 slapd_fd_pass_min_differ: '1' # Determines how many characters that must be different from the previous password.
+
+# NGinx parameters #
+slapd_ngx_block_agents: true # Enables or disables block unsafe User Agents.
+slapd_ngx_block_string: true # Enables or disables block includes Exploits / File injections / Spam / SQL injections.
+slapd_ngx_compress: true # Enables or disables compression.
+#slapd_ngx_domain: 'fusiondirectory.example.com' # Defines domain name.
+slapd_ngx_pagespeed: false # Enables or disables pagespeed modules.
+slapd_ngx_port_http: '80' # NGinx HTTP listen port.
+slapd_ngx_port_https: '443' # NGinx HTTPs listen port.
+slapd_ngx_ssl_protocols: 'modern' # intermediate or modern, defines SSL protocol profile.
+slapd_ngx_version: 'standard' # extras or standard
+slapd_ngx_site_path: '/data/nginx/site' # Specify the NGinx site directory.
+slapd_ngx_logs_path: '/data/nginx/logs' # Specify the NGinx logs directory.
 
 # Service Mesh #
 environments: 'Development' # Define the service environment.

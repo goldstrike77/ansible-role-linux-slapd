@@ -1,4 +1,11 @@
 ---
+- name: Create FusionDirectory html link.
+  file:
+    src: '/usr/share/fusiondirectory/html'
+    dest: '{{ slapd_ngx_site_path }}/{% if slapd_ngx_domain is defined %}{{ slapd_ngx_domain }}{% else %}{{ ansible_default_ipv4.address }}{% endif %}'
+    state: 'link'
+    force: 'yes'
+
 - name: FusionDirectory Schema setup.
   command: 'fusiondirectory-insert-schema'
   register: slapd_conf_status
@@ -14,7 +21,6 @@
     owner: 'root'
     group: 'apache'
     mode: '0640'
-  no_log: true
 
 - name: Fusiondirectory installation operation.
   block:
@@ -59,3 +65,12 @@
         - "'modifying entry' not in slapd_conf_status.stdout"
         - "'adding new entry' not in slapd_conf_status.stdout"
   when: slapd_servers[0] in ansible_default_ipv4.address
+
+- name: Remove the LDAP Data Interchange files.
+  file:
+    path: '/tmp/{{ item }}.ldif'
+    state: 'absent'
+  when: slapd_ldif_clean | bool
+  changed_when: false
+  failed_when: false
+  loop: '{{ slapd_conf_fd_ldif }}'

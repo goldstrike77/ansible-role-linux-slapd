@@ -53,4 +53,48 @@ dependencies:
   - role: 'ansible-role-linux-phpfpm'
     vars:
       php_version: '{{ slapd_fd_php_version | default("73") }}'
+      php_fpm_port: '{{ slapd_fd_php_fpm_port | default("9000") }}'
+    when: slapd_fd_dept | bool
+  - role: 'ansible-role-linux-nginx'
+    vars:
+      ngx_block_agents: '{{ slapd_ngx_block_agents | bool }}'
+      ngx_block_string: '{{ slapd_ngx_block_string | bool }}'
+      ngx_compress: '{{ slapd_ngx_compress | bool }}'
+      ngx_domain: '{{ slapd_ngx_domain }}'
+      ngx_pagespeed: '{{ slapd_ngx_pagespeed | bool }}'
+      ngx_port_http: '{{ slapd_ngx_port_http }}'
+      ngx_port_https: '{{ slapd_ngx_port_https }}'
+      ngx_ssl_protocols: '{{ slapd_ngx_ssl_protocols }}'
+      ngx_version: '{{ slapd_ngx_version }}'
+      ngx_site_path: '{{ slapd_ngx_site_path }}'
+      ngx_logs_path: '{{ slapd_ngx_logs_path }}'
+      ngx_proxy_read_timeout: '60'
+      ngx_proxy_send_timeout: '60'
+      ngx_allow_methods:
+        - 'POST'
+        - 'PUT'
+        - 'GET'
+        - 'HEAD'
+        - 'DELETE'
+      ngx_header:
+        - 'Referrer-Policy "no-referrer-when-downgrade";'
+        - 'Strict-Transport-Security "max-age=31536000; includeSubDomains; preload;";'
+        - 'X-Content-Type-Options "nosniff";'
+        - 'X-Frame-Options "SAMEORIGIN";'
+        - 'X-Xss-Protection "1; mode=block";'
+      ngx_site:
+        - domain: '{% if slapd_ngx_domain is defined %}{{ slapd_ngx_domain }}{% else %}{{ ansible_default_ipv4.address }}{% endif %}'
+          syntax:
+            - 'location ~ ^/.*\.php(/|$) {'
+            - '  expires off;'
+            - '  fastcgi_pass backend_{% if slapd_ngx_domain is defined %}{{ slapd_ngx_domain }}{% else %}{{ ansible_default_ipv4.address }}{% endif %};'
+            - '  fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;'
+            - '  fastcgi_param DOCUMENT_ROOT $realpath_root;'
+            - '  include fastcgi_params;'
+            - '  fastcgi_param HTTPS $https;'
+            - '}'
+          backend_address: '{{ slapd_servers }}'
+          backend_port: '{{ slapd_fd_php_fpm_port | default("9000") }}'
+          sticky: 'ip_hash'
+          keepalive: '{{ ansible_processor_vcpus * 4 }}'
     when: slapd_fd_dept | bool

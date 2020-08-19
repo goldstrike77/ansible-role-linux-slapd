@@ -9,7 +9,6 @@ slapd_servers: "\
 slapd_conf_ldif:
   - 'base'
   - 'certs'
-  - 'cn_monitor'
   - 'configrep'
   - 'monitor'
   - 'olcdatabase'
@@ -35,3 +34,5 @@ slapd_pypi_url: 'pypi.tuna.tsinghua.edu.cn'
 slapd_python_dependent_packages:
   - 'pip'
   - 'cryptography'
+
+slapd_ldif_clean: true
