@@ -6,14 +6,6 @@
     state: 'link'
     force: 'yes'
 
-- name: FusionDirectory Schema setup.
-  command: 'fusiondirectory-insert-schema'
-  register: slapd_conf_status
-  failed_when:
-    - "'already exists' not in slapd_conf_status.stdout"
-    - "'modifying entry' not in slapd_conf_status.stdout"
-    - "'adding new entry' not in slapd_conf_status.stdout"
-
 - name: FusionDirectory Configuration Files transfer.
   template:
     src: 'fusiondirectory.conf.j2'
@@ -24,6 +16,14 @@
 
 - name: Fusiondirectory installation operation.
   block:
+    - name: FusionDirectory Schema setup.
+      command: 'fusiondirectory-insert-schema -i /etc/openldap/schema/fusiondirectory/{{ item }}.schema'
+      loop: '{{ slapd_fd_conf_schema }}'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
     - name: Calculate FusionDirectory Configuration hash.
       stat:
         path: '/var/cache/fusiondirectory/class.cache'

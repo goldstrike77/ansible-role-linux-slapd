@@ -42,3 +42,30 @@
       retries: 5
       delay: 2
   when: slapd_fd_dept | bool
+
+- name: Add EPEL YUM repositories.
+  yum_repository:
+    name: '{{ slapd_epel_repo_name }}'
+    description: '{{ slapd_epel_repo_name }} YUM repo'
+    file: '{{ slapd_epel_repo_name }}'
+    baseurl: '{{ slapd_epel_repo_url }}'
+    gpgcheck: 'no'
+    timeout: '60'
+  when:
+    - slapd_backupset_arg.cloud_rsync | bool
+    - slapd_backupset_arg.cloud_drive is defined
+
+- name: Install the Rclone command line program packages.
+  yum:
+    name: 'rclone'
+    state: 'present'
+    validate_certs: 'no'
+    disable_gpg_check: 'yes'
+    update_cache: 'yes'
+  register: slapd_rc_yum_status
+  until: slapd_rc_yum_status is succeeded
+  retries: 5
+  delay: 2
+  when:
+    - slapd_backupset_arg.cloud_rsync | bool
+    - slapd_backupset_arg.cloud_drive is defined

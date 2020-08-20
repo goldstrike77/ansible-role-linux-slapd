@@ -1,0 +1,7 @@
+[slapd]
+type = {{ slapd_backupset_arg.cloud_drive }}
+{% if slapd_backupset_arg.cloud_drive == 'azureblob' %}
+account = {{ slapd_backupset_arg.cloud_config.account }}
+key = {{ slapd_backupset_arg.cloud_config.key }}
+endpoint = {{ slapd_backupset_arg.cloud_config.endpoint }}
+{% endif %}

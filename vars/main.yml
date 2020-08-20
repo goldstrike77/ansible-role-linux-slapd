@@ -27,6 +27,24 @@ slapd_conf_schema:
   - 'nis'
   - 'inetorgperson'
 
+slapd_fd_conf_schema:
+  - 'core-fd-conf'
+  - 'core-fd'
+  - 'ldapns'
+  - 'template-fd'
+  - 'applications-fd'
+  - 'applications-fd-conf'
+  - 'audit-fd'
+  - 'audit-fd-conf'
+  - 'mail-fd'
+  - 'mail-fd-conf'
+  - 'cyrus-fd'
+  - 'renater-partage-fd'
+  - 'personal-fd'
+  - 'personal-fd-conf'
+  - 'openssh-lpk'
+  - 'user-reminder-fd-conf'
+
 slapd_cert_path: '/etc/openldap/certs'
 
 slapd_pypi_url: 'pypi.tuna.tsinghua.edu.cn'

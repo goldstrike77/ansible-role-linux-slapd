@@ -12,6 +12,19 @@ slapd_port_arg: # Defines communication port.
   ldaps: '636'
   exporter: '9330'
 
+# Backup parameters #
+slapd_backupset_arg:
+  keep: '15' # Backup retention cycle in days.
+  encryptkey: 'aEU2y9FcKkeQ' # BackupSet encryption key, Decrypt by [openssl aes-256-cbc -d -k passwd -salt -in file.tar.gz | tar xzvfP -].
+  cloud_rsync: true # Whether rsync for cloud storage.
+  cloud_drive: 'azureblob' # Specify the cloud storage providers.
+  cloud_bwlimit: '10M' # Controls the bandwidth limit.
+  cloud_event: 'sync' # Define transfer events.
+  cloud_config: # Specify the cloud storage configuration.
+    account: 'blobuser' # Storage Account Name.
+    key: 'base64encodedkey==' # Storage Account Key.
+    endpoint: 'blob.core.chinacloudapi.cn' # Endpoint for the service.
+
 # Fusiondirectory parameters #
 slapd_fd_dept: true # A boolean value, whether to use FusionDirectory for management of data stored in an LDAP directory.
 slapd_fd_php_version: '73' # Specify the php-fpm version.

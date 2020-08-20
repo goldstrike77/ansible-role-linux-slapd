@@ -1,0 +1,26 @@
+#!/bin/bash
+RM=/bin/rm
+SLAPCAT=/sbin/slapcat
+TAR=/bin/tar
+DATE=`/bin/date '+%Y%m%d_%H%M%S'`
+FIND=/bin/find
+OPENSSL=/bin/openssl
+RCLONE=/bin/rclone
+TMPFILE="/tmp/slapd-backup-runner.$$.tmp"
+
+$SLAPCAT -v -l {{ slapd_path }}/backup/slapd/openldap-backup.ldif >> $TMPFILE 2>&1
+
+echo $?
+if [ $? = 0 ]; then
+$TAR zcvfP - {{ slapd_path }}/backup/slapd/openldap-backup.ldif --remove-files | $OPENSSL aes-256-cbc -salt -k '{{ slapd_backupset_arg.encryptkey | default("changeme") }}' -out {{ slapd_path }}/backup/slapd/slapd_full_$DATE.tar.gz >> $TMPFILE 2>&1
+fi
+
+$FIND {{ slapd_path }}/backup/slapd -type f -mtime +{{ slapd_backupset_arg.keep }} -exec $RM -fr {} \;
+
+{% if slapd_backupset_arg.cloud_rsync | bool and slapd_backupset_arg.cloud_drive is defined %}
+# Rsync for cloud storage
+$RCLONE --verbose --config="/etc/rclone/slapd.conf" mkdir slapd:{{ ansible_hostname | lower }} >> $TMPFILE 2>&1
+$RCLONE --bwlimit="{{ slapd_backupset_arg.cloud_bwlimit | default('10M') }}" --verbose --config="/etc/rclone/slapd.conf" {{ slapd_backupset_arg.cloud_event | default('sync') }} {{ slapd_path }}/backup/slapd slapd:{{ ansible_hostname | lower }}/slapd >> $TMPFILE 2>&1
+{% endif %}
+
+exit 0

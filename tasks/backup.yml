@@ -1,0 +1,50 @@
+---
+- name: Creating OpenLDAP backup folder.
+  file:
+    dest: '{{ slapd_path }}/{{ item.path }}'
+    state: 'directory'
+    owner: '{{ item.owner }}'
+    group: '{{ item.owner }}'
+    mode: '{{ item.mode }}'
+  loop:
+  - { path: 'backup', owner: 'root', mode: '0755' }
+  - { path: 'backup/slapd', owner: 'ldap', mode: '0750' }  
+
+- name: Creating Rclone configureation folder.
+  file:
+    dest: '/etc/rclone'
+    state: 'directory'
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  when:
+    - slapd_backupset_arg.cloud_rsync | bool
+    - slapd_backupset_arg.cloud_drive is defined
+
+- name: Rclone configuration file transfer.
+  template:
+    src: 'rclone.conf.j2'
+    dest: '/etc/rclone/slapd.conf'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0640'
+  when:
+    - slapd_backupset_arg.cloud_rsync | bool
+    - slapd_backupset_arg.cloud_drive is defined
+
+- name: OpenLDAP Backup Scripts file transfer.
+  template:
+    src: 'slapd_backup.sh.j2'
+    dest: '/usr/local/bin/slapd_backup.sh'
+    owner: 'ldap'
+    group: 'ldap'
+    mode: '0660'
+  no_log: true
+
+- name : Configure OpenLDAP backup job.
+  cron:
+    user: 'ldap'
+    name: 'OpenLDAP Backup'
+    minute: '{{ 60 | random(seed=inventory_hostname) }}'
+    hour: '{{ 6 | random(seed=inventory_hostname,step=1) }}'
+    job: '/bin/sh /usr/local/bin/slapd_backup.sh'
