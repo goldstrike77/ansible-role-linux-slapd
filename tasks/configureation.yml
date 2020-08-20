@@ -1,4 +1,15 @@
 ---
+- name: OpenLDAP systemd configuration.
+  lineinfile:
+    state: 'present'
+    dest: '/lib/systemd/system/slapd.service'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+    insertafter: '\[Service\]'
+  loop:
+    - { regexp: '^LimitNOFILE', line: 'LimitNOFILE=10240' }
+  register: slapd_systemd
+
 - name: Creating OpenLDAP database and logs storage directory.
   file:
     dest: '{{ slapd_path }}/ldap'
@@ -27,7 +38,7 @@
 - name: Reload the OpenLDAP service.
   shell: echo ''
   notify: 'Ensure OpenLDAP service is enabled'
-  when: slapd_yum_status is changed or slapd_db_config is changed
+  when: slapd_yum_status is changed or slapd_db_config is changed or slapd_systemd is changed
 
 - name: Force the handler to run immediately.
   meta: flush_handlers
