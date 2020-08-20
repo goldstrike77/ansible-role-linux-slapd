@@ -32,7 +32,7 @@ FusionDirectory is an identity management solution - IAM, Provides daily managem
 
 ## Requirements
 ### Operating systems
-This Ansible role installs OpenLDAP and FusionDirectory on Linux operating system, including establishing a filesystem structure and server configuration with some common operational features, Will works on the following operating systems:
+This Ansible role installs OpenLDAP and FusionDirectory on Linux operating system, including establishing a filesystem structure and server configuration with some common operational features, support for replication for multimaster, Will works on the following operating systems:
 
   * CentOS 7
 
@@ -66,7 +66,7 @@ There are some variables in defaults/main.yml which can (Or needs to) be overrid
 * `slapd_backupset_arg.cloud_config`: Specify the cloud storage configuration.
 
 ##### Fusiondirectory parameters
-* `slapd_fd_dept`: A boolean value, whether to use FusionDirectory for management of data stored in an LDAP directory.
+* `slapd_fd_dept`: A boolean value, whether to use FusionDirectory for management.
 * `slapd_fd_php_version`: Specify the php-fpm version.
 * `slapd_fd_php_fpm_port`: Defines Php-fpm instance listening port.
 * `slapd_fd_user`: Specify the Fusiondirectory administrator username.
@@ -124,7 +124,7 @@ See tests/inventory for an example.
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
 ```yaml
-- hosts: all
+- hosts: ldap
   roles:
      - role: ansible-role-linux-slapd
 ```
