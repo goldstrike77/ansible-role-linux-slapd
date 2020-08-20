@@ -16,7 +16,7 @@ slapd_port_arg: # Defines communication port.
 slapd_backupset_arg:
   keep: '15' # Backup retention cycle in days.
   encryptkey: 'aEU2y9FcKkeQ' # BackupSet encryption key, Decrypt by [openssl aes-256-cbc -d -k passwd -salt -in file.tar.gz | tar xzvfP -].
-  cloud_rsync: true # Whether rsync for cloud storage.
+  cloud_rsync: false # Whether rsync for cloud storage.
   cloud_drive: 'azureblob' # Specify the cloud storage providers.
   cloud_bwlimit: '10M' # Controls the bandwidth limit.
   cloud_event: 'sync' # Define transfer events.
