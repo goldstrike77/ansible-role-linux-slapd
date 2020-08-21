@@ -53,4 +53,4 @@ slapd_python_dependent_packages:
   - 'pip'
   - 'cryptography'
 
-slapd_ldif_clean: false
+slapd_ldif_clean: true
