@@ -18,9 +18,24 @@ olcDbIndex: entryCSN  eq
 -
 add: olcSyncRepl
 {% for host in slapd_servers %}
-olcSyncRepl: rid=00{{ loop.index + slapd_servers | length }} provider={% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }} binddn="cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" bindmethod=simple
-  tls_reqcert=never credentials={{ slapd_root_pass }} searchbase="dc={{ datacenter }},dc={{ domain }}" type=refreshOnly
-  interval=00:00:00:10 retry="5 5 300 5" timeout=5
+olcSyncRepl: rid=00{{ loop.index + slapd_servers | length }}
+  provider={% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }}
+  binddn="cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}"
+  bindmethod=simple
+{% if slapd_ssl | bool %}
+  starttls=yes
+  tls_cert="{{ slapd_cert_path }}/server.crt"
+  tls_key="{{ slapd_cert_path }}/server.key"
+  tls_cacert="{{ slapd_cert_path }}/ca-cert.pem"
+  tls_reqcert=demand
+{% endif %}
+  schemachecking=on
+  credentials={{ slapd_root_pass }}
+  searchbase="dc={{ datacenter }},dc={{ domain }}"
+  type=refreshOnly
+  interval=00:00:00:10
+  retry="5 5 300 5"
+  timeout=10
 {% endfor %}
 -
 add: olcMirrorMode

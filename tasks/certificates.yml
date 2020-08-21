@@ -43,6 +43,7 @@
           - 'DNS:{{ ansible_hostname }}'
           - 'DNS:{{ ansible_fqdn }}'
           - 'DNS:{{ group_names[-1] | upper | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-slapd.service.{{ datacenter | lower }}.{{ domain | lower }}'
+          - 'DNS:{{ ansible_default_ipv4.address }}'
           - 'IP:{{ ansible_default_ipv4.address }}'
         owner: 'ldap'
         mode: '0640'

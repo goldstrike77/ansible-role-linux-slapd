@@ -1,5 +1,3 @@
-### Update Server ID with LDAP URL ###
-
 dn: cn=config
 changetype: modify
 replace: olcServerID
@@ -8,22 +6,33 @@ olcServerID: {{ loop.index }} {% if slapd_ssl | bool %}ldaps{% else %}ldap{% end
 {% endfor %}
 {% if slapd_servers | length > 1 %}
 
-### Enable Config Replication###
 dn: olcOverlay=syncprov,olcDatabase={0}config,cn=config
 changetype: add
 objectClass: olcOverlayConfig
 objectClass: olcSyncProvConfig
 olcOverlay: syncprov
 
-### Adding config details for confDB replication ###
-
 dn: olcDatabase={0}config,cn=config
 changetype: modify
 add: olcSyncRepl
 {% for host in slapd_servers %}
-olcSyncRepl: rid=00{{ loop.index }} provider={% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }} binddn="cn=config"
-  bindmethod=simple tls_reqcert=never credentials={{ slapd_root_pass }} searchbase="cn=config"
-  type=refreshAndPersist retry="5 5 300 5" timeout=5
+olcSyncRepl: rid=00{{ loop.index }}
+  provider={% if slapd_ssl | bool %}ldaps{% else %}ldap{% endif %}://{{ host }}
+  binddn="cn=config"
+  bindmethod=simple
+{% if slapd_ssl | bool %}
+  starttls=yes
+  tls_cert="{{ slapd_cert_path }}/server.crt"
+  tls_key="{{ slapd_cert_path }}/server.key"
+  tls_cacert="{{ slapd_cert_path }}/ca-cert.pem"
+  tls_reqcert=demand
+{% endif %}
+  credentials={{ slapd_root_pass }}
+  schemachecking=on
+  searchbase="cn=config"
+  type=refreshAndPersist
+  retry="5 5 300 5"
+  timeout=10
 {% endfor %}
 -
 add: olcMirrorMode
