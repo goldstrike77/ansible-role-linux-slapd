@@ -20,6 +20,7 @@ slapd_fd_packages:
   - 'fusiondirectory-selinux'
   - 'fusiondirectory-schema'
   - 'schema2ldif'
+  - 'fusiondirectory-plugin-developers'
   - 'fusiondirectory-plugin-applications'
   - 'fusiondirectory-plugin-applications-schema'
   - 'fusiondirectory-plugin-audit'
@@ -40,6 +41,10 @@ slapd_fd_packages:
   - 'fusiondirectory-plugin-ssh-schema'
   - 'fusiondirectory-plugin-user-reminder'
   - 'fusiondirectory-plugin-user-reminder-schema'
+  - 'fusiondirectory-plugin-dsa'
+  - 'fusiondirectory-plugin-dsa-schema'
+  - 'fusiondirectory-plugin-autofs'
+  - 'fusiondirectory-plugin-autofs-schema'
 
 slapd_epel_repo_name: 'epel'
 slapd_epel_repo_url: 'http://mirrors.tuna.tsinghua.edu.cn/epel/{{ ansible_distribution_major_version }}/$basearch/'

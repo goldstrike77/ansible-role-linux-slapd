@@ -44,6 +44,8 @@ slapd_fd_conf_schema:
   - 'personal-fd-conf'
   - 'openssh-lpk'
   - 'user-reminder-fd-conf'
+  - 'dsa-fd-conf'
+  - 'autofs-fd-conf'
 
 slapd_cert_path: '/etc/openldap/certs'
 
