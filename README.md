@@ -30,6 +30,24 @@ OpenLDAP is a free, open-source implementation of the Lightweight Directory Acce
 
 FusionDirectory is an identity management solution - IAM, Provides daily management of data stored in an LDAP directory. Becoming the cornerstone of the information system, the corporate directory becomes more complex offering more data and managing more infrastructure services. Simple and can be used to delegate fully or partly the data management to non-specialists.
 
+FusionDirectory provides a simplified interface for identity management while being extensible. The FusionDirectory project aims to fill this gap by providing a nice web application that allows you not only to manage your classical OpenLDAP data like users, groups, services... but also offer an API allowing to write new plugins to the extent the application to be more useful to you.
+
+Bundled with many plugins today ranging from user management to service management and systems management, everything managed trough your LDAP server.
+
+* User, group, roles, sudo ...
+* Systems
+* Network services : SMTP / DNS / DHCP / Samba
+* and much more ...
+
+FusionDirectory is user-friendly and includes a number of features and modes including:
+
+* A copy and paste system
+* Template mode for all objects stored with FusionDirectory
+* Snapshot mode
+* Dashboard (user, password, expiration of users, installation and deployment)
+* Trigger to create action on other systems after saving, modifying, removing
+<p><img src="https://raw.githubusercontent.com/goldstrike77/goldstrike77.github.io/master/img/fusiondirectory.png" /></p>
+
 ## Requirements
 ### Operating systems
 This Ansible role installs OpenLDAP and FusionDirectory on Linux operating system, including establishing a filesystem structure and server configuration with some common operational features, support for replication for multimaster, Will works on the following operating systems:
