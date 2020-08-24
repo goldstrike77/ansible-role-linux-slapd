@@ -35,6 +35,8 @@ slapd_fd_tz: 'Asia/Shanghai' # Defines the timezone used within FusionDirectory 
 slapd_fd_pass_hash: 'crypt/sha-512' # Defines the default password hash to choose for new accounts.
 slapd_fd_pass_min_length: '12' # Determines the minimum length of a new password entered to be considered valid.
 slapd_fd_pass_min_differ: '1' # Determines how many characters that must be different from the previous password.
+slapd_fd_uid_base: '3100' # Base number for user id.
+slapd_fd_gid_base: '3100' # Base number for group id.
 
 # NGinx parameters #
 slapd_ngx_block_agents: true # Enables or disables block unsafe User Agents.

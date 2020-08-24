@@ -3,7 +3,6 @@ ou: fusiondirectory
 objectClass: organizationalUnit
 
 dn: cn=config,ou=fusiondirectory,dc={{ datacenter }},dc={{ domain }}
-objectClass: fusionDirectoryConf
 fdTheme: breezy
 fdTimezone: {{ slapd_fd_tz }}
 fusionConfigMd5: {{ slapd_fd_config_hash.stat.checksum }}
@@ -48,3 +47,113 @@ fdListSummary: TRUE
 fdAclTabOnObjects: FALSE
 fdDisplayHookOutput: FALSE
 cn: config
+fdMailAttribute: mail
+fdCyrusUseSlashes: FALSE
+fdCyrusDeleteMailbox: FALSE
+fdGroupRDN: ou=groups
+fdMinId: 100
+fdUidNumberBase: {{ slapd_fd_uid_base }}
+fdGidNumberBase: {{ slapd_fd_gid_base }}
+fdIdAllocationMethod: traditional
+fdShells: /bin/ash
+fdShells: /bin/bash
+fdShells: /bin/csh
+fdShells: /bin/sh
+fdShells: /bin/ksh
+fdShells: /bin/tcsh
+fdShells: /bin/dash
+fdShells: /bin/zsh
+fdShells: /sbin/nologin
+fdShells: /bin/false
+fdShells: /usr/bin/git-shell
+fdDefaultShell: /bin/bash
+fdPrivateEmailPasswordRecovery: FALSE
+fdAutofsRDN: ou=autofs
+fdApplicationsRDN: ou=apps
+fdWebappsRDN: ou=apps
+fdWebappsMenu: none
+fdAuditRDN: ou=audit
+fdAuditActions: modify
+fdAuditActions: create
+fdAuditActions: remove
+fdAuditRotationDelay: 120
+fdDashboardNumberOfDigit: 3
+fdDashboardPrefix: PC
+fdDashboardExpiredAccountsDays: 15
+fdDSARDN: ou=dsa
+fdOGroupRDN: ou=groups
+fdForceSaslPasswordAsk: FALSE
+fdUserReminderAlertDelay: 15
+fdUserReminderResendDelay: 7
+fdUserReminderPostponeDays: 15
+fdUserReminderEmail: do-not-reply@somebody.com
+fdUserReminderUseAlternate: TRUE
+fdUserReminderForwardPpolicyAlert: TRUE
+fdUserReminderPpolicyAlertSubject: [FusionDirectory] Your password is about 
+ to expire
+fdUserReminderPpolicyAlertBody:: RGVhciAlMSRzLAp5b3VyIHBhc3N3b3JkIGZvciBhY2N
+ vdW50ICUyJHMgaXMgYWJvdXQgdG8gZXhwaXJlLCBwbGVhc2UgY2hhbmdlIHlvdXIgcGFzc3dvcm
+ Q6IApodHRwczovLzEwLjEwMS40LjM3OjQ0My9tYWluLnBocD9wbHVnPTIxJnJlc2V0PTEK
+fdUserReminderForwardAlert: TRUE
+fdUserReminderAlertSubject: [FusionDirectory] Your account is about to expir
+ e
+fdUserReminderAlertBody:: RGVhciAlMSRzLAp5b3VyIGFjY291bnQgJTIkcyBpcyBhYm91dC
+ B0byBleHBpcmUsIHBsZWFzZSB1c2UgdGhpcyBsaW5rIHRvIGF2b2lkIHRoaXM6IApodHRwczovL
+ zEwLjEwMS40LjM3OjQ0My9tYWluLnBocD9wbHVnPTIxJnJlc2V0PTEvZXhwaXJlZF9wb3N0cG9u
+ ZS5waHA/dWlkPSUyJHMmdG9rZW49JTMkcwo=
+fdUserReminderForwardConfirmation: TRUE
+fdUserReminderConfirmationSubject: [FusionDirectory] Your account expiration
+  has been postponed
+fdUserReminderConfirmationBody:: RGVhciAlMSRzLAogeW91ciBhY2NvdW50ICUyJHMgZXh
+ waXJhdGlvbiBoYXMgYmVlbiBzdWNjZXNzZnVsbHkgcG9zdHBvbmVkLgo=
+fdReminderTokenRDN: ou=reminder
+objectClass: fusionDirectoryConf
+objectClass: fdMailPluginConf
+objectClass: fdPersonalPluginConf
+objectClass: fdAutofsPluginConf
+objectClass: fdApplicationsPluginConf
+objectClass: fdAuditPluginConf
+objectClass: fdDashboardPluginConf
+objectClass: fdDsaPluginConf
+objectClass: fusionDirectoryPluginsConf
+objectClass: fdUserReminderPluginConf
+objectClass: fdPasswordRecoveryConf
+fdPasswordRecoveryActivated: TRUE
+fdPasswordRecoveryEmail: do-not-reply@somebody.com
+fdPasswordRecoveryValidity: 10
+fdPasswordRecoverySalt: SomethingSecretAndVeryLong
+fdPasswordRecoveryUseAlternate: FALSE
+fdPasswordRecoveryLoginAttribute: uid
+fdPasswordRecoveryMailSubject: [FusionDirectory] Password recovery link
+fdPasswordRecoveryMailBody:: SGVsbG8sCgpIZXJlIGlzIHlvdXIgaW5mb3JtYXRpb246IAo
+ gLSBMb2dpbiA6ICVzCiAtIExpbmsgOiAlcwoKVGhpcyBsaW5rIGlzIG9ubHkgdmFsaWQgZm9yID
+ EwIG1pbnV0ZXMu
+fdPasswordRecoveryMail2Subject: [FusionDirectory] Password recovery successf
+ ul
+fdPasswordRecoveryMail2Body:: SGVsbG8sCgpZb3VyIHBhc3N3b3JkIGhhcyBiZWVuIGNoYW
+ 5nZWQuCllvdXIgbG9naW4gaXMgc3RpbGwgJXMu
+
+dn: ou=templates,ou=people,dc={{ datacenter }},dc={{ domain }}
+ou: templates
+objectClass: organizationalUnit
+
+dn: cn=template_user,ou=templates,ou=people,dc={{ datacenter }},dc={{ domain }}
+objectClass: fdTemplate
+fdTemplateField: force_ids:FALSE
+fdTemplateField: gosaMailDeliveryMode:[]
+fdTemplateField: homeDirectory:/home/%uid%
+fdTemplateField: loginShell:/bin/bash
+fdTemplateField: mail:%askme%
+fdTemplateField: mustchangepassword:FALSE
+fdTemplateField: objectClass:gosaMailAccount
+fdTemplateField: objectClass:inetOrgPerson
+fdTemplateField: objectClass:organizationalPerson
+fdTemplateField: objectClass:person
+fdTemplateField: objectClass:posixAccount
+fdTemplateField: objectClass:shadowAccount
+fdTemplateField: preferredLanguage:en_US
+fdTemplateField: uid:%askme%
+fdTemplateField: userPassword:{CRYPT}$6$rl5dzuHcRVDhVqCA$3HRTQw7lTvyP.uoKcaq
+ Cuze4eyln30yn/UzFmSRh3gcNAm6eJKg0CR5XVl6eeMWsw585mrh..UtCDeQmTL1Pq.|%r[12]|
+ %
+cn: template_user

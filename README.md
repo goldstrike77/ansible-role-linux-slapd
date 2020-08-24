@@ -75,6 +75,8 @@ There are some variables in defaults/main.yml which can (Or needs to) be overrid
 * `slapd_fd_pass_hash`: Defines the default password hash to choose for new accounts.
 * `slapd_fd_pass_min_length`: Determines the minimum length of a new password entered to be considered valid.
 * `slapd_fd_pass_min_differ`: Determines how many characters that must be different from the previous password.
+* `slapd_fd_uid_base`: Base number for user id.
+* `slapd_fd_gid_base`: Base number for group id.
 
 ##### NGinx parameters
 * `slapd_ngx_block_agents`: Enables or disables block unsafe User Agents.
@@ -161,6 +163,8 @@ slapd_fd_tz: 'Asia/Shanghai'
 slapd_fd_pass_hash: 'crypt/sha-512'
 slapd_fd_pass_min_length: '12'
 slapd_fd_pass_min_differ: '1'
+slapd_fd_uid_base: '3100'
+slapd_fd_gid_base: '3100'
 slapd_ngx_block_agents: true
 slapd_ngx_block_string: true
 slapd_ngx_compress: true
