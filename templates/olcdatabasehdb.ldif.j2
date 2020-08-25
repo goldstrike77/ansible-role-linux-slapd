@@ -10,16 +10,18 @@ replace: olcRootPW
 olcRootPW: {{ slapd_root_pass_hash }}
 -
 add: olcDbIndex
-olcDbIndex: entryUUID eq
+olcDbIndex: entryUUID  eq
 -
 add: olcDbIndex
-olcDbIndex: entryCSN eq
+olcDbIndex: entryCSN  eq
 -
 add: olcAccess
 olcAccess: to attrs=userPassword
   by self =xw
   by anonymous auth
   by * none
+-
+add: olcAccess
 olcAccess: to *
   by self write
   by users read

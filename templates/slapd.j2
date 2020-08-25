@@ -15,3 +15,6 @@ SLAPD_OPTIONS="-4"
 
 # Keytab location for GSSAPI Kerberos authentication
 #KRB5_KTNAME="FILE:/etc/openldap/ldap.keytab"
+{% if slapd_ssl | bool %}
+SLAPD_LDAPS=yes
+{% endif %}

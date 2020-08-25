@@ -36,7 +36,7 @@ fdCasContext: /cas
 fdAccountPrimaryAttribute: uid
 fdCnPattern: %givenName% %sn%
 fdStrictNamingRules: TRUE
-fdUserRDN: ou=people
+fdUserRDN: ou=People
 fdAclRoleRDN: ou=aclroles
 fdRestrictRoleMembers: FALSE
 fdSplitPostalAddress: FALSE
@@ -50,7 +50,7 @@ cn: config
 fdMailAttribute: mail
 fdCyrusUseSlashes: FALSE
 fdCyrusDeleteMailbox: FALSE
-fdGroupRDN: ou=groups
+fdGroupRDN: ou=Groups
 fdMinId: 100
 fdUidNumberBase: {{ slapd_fd_uid_base }}
 fdGidNumberBase: {{ slapd_fd_gid_base }}
@@ -81,7 +81,7 @@ fdDashboardNumberOfDigit: 3
 fdDashboardPrefix: PC
 fdDashboardExpiredAccountsDays: 15
 fdDSARDN: ou=dsa
-fdOGroupRDN: ou=groups
+fdOGroupRDN: ou=Groups
 fdForceSaslPasswordAsk: FALSE
 fdUserReminderAlertDelay: 15
 fdUserReminderResendDelay: 7
@@ -133,11 +133,11 @@ fdPasswordRecoveryMail2Subject: [FusionDirectory] Password recovery successf
 fdPasswordRecoveryMail2Body:: SGVsbG8sCgpZb3VyIHBhc3N3b3JkIGhhcyBiZWVuIGNoYW
  5nZWQuCllvdXIgbG9naW4gaXMgc3RpbGwgJXMu
 
-dn: ou=templates,ou=people,dc={{ datacenter }},dc={{ domain }}
+dn: ou=templates,ou=People,dc={{ datacenter }},dc={{ domain }}
 ou: templates
 objectClass: organizationalUnit
 
-dn: cn=template_user,ou=templates,ou=people,dc={{ datacenter }},dc={{ domain }}
+dn: cn=template_user,ou=templates,ou=People,dc={{ datacenter }},dc={{ domain }}
 objectClass: fdTemplate
 fdTemplateField: force_ids:FALSE
 fdTemplateField: gosaMailDeliveryMode:[]

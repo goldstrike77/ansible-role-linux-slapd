@@ -26,6 +26,15 @@
     group: 'ldap'
   register: slapd_db_config
 
+- name: OpenLDAP configuration file transfer.
+  template:
+    src: 'slapd.j2'
+    dest: '/etc/sysconfig/slapd'
+    owner: 'root'
+    group: 'root'
+    mode: '644'
+  register: slapd_conf_file
+
 - name: LDAP Data Interchange files transfer.
   template:
     src: '{{ item }}.ldif.j2'
@@ -38,7 +47,7 @@
 - name: Reload the OpenLDAP service.
   shell: echo ''
   notify: 'Ensure OpenLDAP service is enabled'
-  when: slapd_yum_status is changed or slapd_db_config is changed or slapd_systemd is changed
+  when: slapd_yum_status is changed or slapd_db_config is changed or slapd_systemd is changed or slapd_conf_file is changed
 
 - name: Force the handler to run immediately.
   meta: flush_handlers
@@ -57,29 +66,6 @@
     - "'modifying entry' not in slapd_conf_status.stdout"
     - "'adding new entry' not in slapd_conf_status.stdout"
   when: slapd_ssl | bool
-
-- name: OpenLDAP configuration file transfer.
-  template:
-    src: 'slapd.j2'
-    dest: '/etc/sysconfig/slapd'
-    owner: 'root'
-    group: 'root'
-    mode: '644'
-  register: slapd_conf_file
-
-- name: Reload the OpenLDAP service.
-  shell: echo ''
-  notify: 'Ensure OpenLDAP service is enabled'
-  when: slapd_conf_file is changed
-
-- name: Force the handler to run immediately.
-  meta: flush_handlers
-
-- name: Waits for OpenLDAP service startup.
-  wait_for:
-    host: '{{ ansible_default_ipv4.address }}'
-    port: '{{ slapd_port_arg.ldap }}'
-    delay: '2'
 
 - name: Enable the OpenLDAP syncprov module.
   command: 'ldapadd -Y EXTERNAL -H ldapi:// -f /tmp/syncprov_mod.ldif'
@@ -120,7 +106,7 @@
       command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/syncprov.ldif'
       when: slapd_servers | length > 1
     - name: Configure hdb database.
-      command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/olcdatabasehdb.ldif'
+      command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabasehdb.ldif'
       register: slapd_conf_status
       failed_when:
         - "'already exists' not in slapd_conf_status.stdout"

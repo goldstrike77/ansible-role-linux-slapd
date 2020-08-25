@@ -1,24 +1,31 @@
 dn: cn=config
 changetype: modify
-replace: olcTLSProtocolMin
-olcTLSProtocolMin: 3.3
+delete: olcTLSCACertificatePath
 
 dn: cn=config
 changetype: modify
-replace: olcTLSCipherSuite
-olcTLSCipherSuite: ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL
-
-dn: cn=config
-changetype: modify
-replace: olcTLSCACertificateFile
+add: olcTLSCACertificateFile
 olcTLSCACertificateFile: {{ slapd_cert_path }}/ca-cert.pem
 
 dn: cn=config
 changetype: modify
 replace: olcTLSCertificateFile
 olcTLSCertificateFile: {{ slapd_cert_path }}/server.crt
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: {{ slapd_cert_path }}/server.key
 
 dn: cn=config
 changetype: modify
-replace: olcTLSCertificateKeyFile
-olcTLSCertificateKeyFile: {{ slapd_cert_path }}/server.key
+add: olcTLSProtocolMin
+olcTLSProtocolMin: 3.3
+
+dn: cn=config
+changetype: modify
+add: olcTLSCipherSuite
+olcTLSCipherSuite: ECDHE-RSA-AES256-SHA384:AES256-SHA256:!RC4:HIGH:!MD5:!aNULL:!EDH:!EXP:!SSLV2:!eNULL
+
+dn: cn=config
+changetype: modify
+add: olcTLSVerifyClient
+olcTLSVerifyClient: never
