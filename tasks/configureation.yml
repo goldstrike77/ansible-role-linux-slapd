@@ -105,6 +105,23 @@
     - name: Enable syncprov for hdb database.
       command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/syncprov.ldif'
       when: slapd_servers | length > 1
+    - name: Add the OpenLDAP schemas.
+      command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ item }}.ldif'
+      loop: '{{ slapd_conf_schema }}'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+    - name: FusionDirectory Schema setup.
+      command: 'fusiondirectory-insert-schema -i /etc/openldap/schema/fusiondirectory/{{ item }}.schema'
+      loop: '{{ slapd_fd_conf_schema }}'
+      register: slapd_conf_status
+      failed_when:
+        - "'already exists' not in slapd_conf_status.stdout"
+        - "'modifying entry' not in slapd_conf_status.stdout"
+        - "'adding new entry' not in slapd_conf_status.stdout"
+      when: slapd_fd_dept | bool
     - name: Configure hdb database.
       command: 'ldapmodify -Y EXTERNAL -H ldapi:/// -f /tmp/olcdatabasehdb.ldif'
       register: slapd_conf_status
@@ -114,14 +131,6 @@
         - "'adding new entry' not in slapd_conf_status.stdout"
     - name: Restrict the monitor permissions are given to only allowed monitoring users.
       command: 'ldapmodify -Y EXTERNAL  -H ldapi:/// -f /tmp/monitor.ldif'
-    - name: Add the OpenLDAP schemas.
-      command: 'ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/{{ item }}.ldif'
-      loop: '{{ slapd_conf_schema }}'
-      register: slapd_conf_status
-      failed_when:
-        - "'already exists' not in slapd_conf_status.stdout"
-        - "'modifying entry' not in slapd_conf_status.stdout"
-        - "'adding new entry' not in slapd_conf_status.stdout"
     - name: Build the directory structure for your domain.
       command: 'ldapadd -x -w {{ slapd_root_pass }} -D "cn={{ slapd_root_user }},dc={{ datacenter }},dc={{ domain }}" -H ldapi:/// -f /tmp/base.ldif'
       register: slapd_conf_status

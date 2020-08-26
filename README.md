@@ -181,8 +181,8 @@ slapd_fd_tz: 'Asia/Shanghai'
 slapd_fd_pass_hash: 'crypt/sha-512'
 slapd_fd_pass_min_length: '12'
 slapd_fd_pass_min_differ: '1'
-slapd_fd_uid_base: '1100'
-slapd_fd_gid_base: '1100'
+slapd_fd_uid_base: '3100'
+slapd_fd_gid_base: '3100'
 slapd_ngx_block_agents: true
 slapd_ngx_block_string: true
 slapd_ngx_compress: true

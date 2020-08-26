@@ -10,22 +10,21 @@ replace: olcRootPW
 olcRootPW: {{ slapd_root_pass_hash }}
 -
 add: olcDbIndex
-olcDbIndex: entryUUID  eq
+olcDbIndex: entryUUID eq
 -
 add: olcDbIndex
-olcDbIndex: entryCSN  eq
+olcDbIndex: entryCSN eq
 -
 add: olcAccess
-olcAccess: to attrs=userPassword
-  by self =xw
+olcAccess: {0}to attrs=userPassword,shadowLastChange by self write
   by anonymous auth
   by * none
 -
 add: olcAccess
-olcAccess: to *
-  by self write
-  by users read
-  by * none
+olcAccess: {1}to dn.base="" by * read
+-
+add: olcAccess
+olcAccess: {2}to * by * read
 {% if slapd_servers | length > 1 %}
 -
 add: olcSyncRepl
