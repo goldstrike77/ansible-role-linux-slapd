@@ -21,9 +21,14 @@ slapd_backupset_arg:
   cloud_bwlimit: '10M' # Controls the bandwidth limit.
   cloud_event: 'sync' # Define transfer events.
   cloud_config: # Specify the cloud storage configuration.
+# azureblob #
     account: 'blobuser' # Storage Account Name.
     key: 'base64encodedkey==' # Storage Account Key.
     endpoint: 'blob.core.chinacloudapi.cn' # Endpoint for the service.
+# s3 #
+#    access_key: 'JPTNJFUFB6UKLUXMRKZT'
+#    secret_key: 'h9KekbhETGC1UNMcbSrWZCOrBgopdgNJWIeAo28i'
+#    endpoint: 'https://demo-storage-production-other-minio.service.dc01.local:9001'
 
 # Fusiondirectory parameters #
 slapd_fd_dept: true # A boolean value, whether to use FusionDirectory for management of data stored in an LDAP directory.

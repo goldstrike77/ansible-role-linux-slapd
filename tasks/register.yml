@@ -11,11 +11,11 @@
   failed_when: false
   register: check_consul_local
 
-- name: Register service with an http health check.
+- name: Register service with an health check.
   uri:
     url: '{{ consul_public_http_prot }}://{{ ansible_default_ipv4.address }}:{{ consul_public_http_port }}/v1/agent/service/register'
     method: 'PUT'
-    body: '{"tags":["slapd"],"ID":"{{ group_names[-1] | upper | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-slapd","name":"{{ group_names[-1] | upper | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-slapd","address":"{{ ansible_default_ipv4.address }}","port":{% if slapd_ssl | bool %}{{ slapd_port_arg.ldaps }}{% else %}{{ slapd_port_arg.ldap }}{% endif %},"checks":[{"tcp":"{{ ansible_default_ipv4.address }}:{% if slapd_ssl | bool %}{{ slapd_port_arg.ldaps }}{% else %}{{ slapd_port_arg.ldap }}{% endif %}","interval":"10s","timeout":"10s"}]}'
+    body: '{"tags":["slapd"],"ID":"{{ group_names[0] | title | regex_replace("_", "-") }}-{{ group_names[-1] | title | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-slapd","name":"{{ group_names[0] | title | regex_replace("_", "-") }}-{{ group_names[-1] | title | regex_replace("_", "-") }}-{{ environments | upper | regex_replace("_", "-") }}-slapd","address":"{{ ansible_default_ipv4.address }}","port":{% if slapd_ssl | bool %}{{ slapd_port_arg.ldaps }}{% else %}{{ slapd_port_arg.ldap }}{% endif %},"checks":[{"tcp":"{{ ansible_default_ipv4.address }}:{% if slapd_ssl | bool %}{{ slapd_port_arg.ldaps }}{% else %}{{ slapd_port_arg.ldap }}{% endif %}","interval":"10s","timeout":"10s"}]}'
     body_format: 'json'
     status_code: '200'
     headers:
@@ -29,7 +29,7 @@
   register: register_status
   until: register_status.status == 200
   retries: 3
-  delay: 3
+  delay: 2
   no_log: true
   changed_when: false
   failed_when: false
@@ -47,11 +47,11 @@
   failed_when: false
   register: check_consul_reg
 
-- name: Register exporter service with an http health check.
+- name: Register exporter with an health check.
   uri:
     url: '{{ consul_public_http_prot }}://{{ item.client }}:{{ consul_public_http_port }}/v1/agent/service/register'
     method: 'PUT'
-    body: '{"tags":["prometheus","exporter"],"ID":"{{ inventory_hostname | upper }}_openldap_exporter","name":"openldap_exporter","address":"{{ ansible_default_ipv4.address }}","port":{{ slapd_port_arg.exporter }},"meta":{"instance":"{{ inventory_hostname | upper }}","group":"{{ group_names[-1] | upper }}","environment":"{{ environments | upper }}","datacenter": "{{ datacenter | lower }}","domain":"{{ domain | lower }}"{% if tags is defined %},{{ tags | to_json | regex_replace("{") | regex_replace("}") }}{% endif %}},"checks":[{"http":"http://{{ ansible_default_ipv4.address }}:{{ slapd_port_arg.exporter }}/metrics","interval":"60s","tls_skip_verify":true,"method":"HEAD","timeout":"10s"}]}'
+    body: '{"tags":["prometheus","exporter"],"ID":"{{ inventory_hostname | upper }}_openldap_exporter","name":"openldap_exporter","address":"{{ ansible_default_ipv4.address }}","port":{{ slapd_port_arg.exporter }},"meta":{"application":"Directory","instance":"{{ inventory_hostname | upper }}","project":"{{ group_names[0] | title | regex_replace("_", "-") }}","group":"{{ group_names[-1] | title | regex_replace("_", "-") }}","environment":"{{ environments | upper }}","datacenter": "{{ datacenter | lower }}","domain":"{{ domain | lower }}"{% if tags is defined %},{{ tags | to_json | regex_replace("{") | regex_replace("}") }}{% endif %}},"checks":[{"http":"http://{{ ansible_default_ipv4.address }}:{{ slapd_port_arg.exporter }}/metrics","interval":"60s","tls_skip_verify":true,"method":"HEAD","timeout":"10s"}]}'
     body_format: 'json'
     status_code: '200'
     headers:
@@ -62,8 +62,7 @@
   environment:
     no_proxy: '{{ item.client }}'
   loop: "{{ check_consul_reg.results | json_query('[*].{client:item,status:status}') }}"
-  when:
-    - item.status == 405
+  when: item.status == 405
   register: register_status
   until: register_status.status == 200
   retries: 3

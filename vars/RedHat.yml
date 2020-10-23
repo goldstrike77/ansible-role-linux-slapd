@@ -8,13 +8,12 @@ slapd_packages:
   - 'openldap-servers-sql'
   - 'policycoreutils-python'
   - 'python-pip'
-  - 'sudo'
 
 slapd_fd_repo_name: 'fusiondirectory'
-slapd_fd_repo_url: 'http://repos.fusiondirectory.org/fusiondirectory-current/rhel{{ ansible_distribution_major_version }}/RPMS'
+slapd_fd_repo_url: 'http://repos.fusiondirectory.org/fusiondirectory-current/rhel{{ ansible_distribution_major_version }}/RPMS/'
 
 slapd_fd_extra_repo_name: 'fusiondirectory-extra'
-slapd_fd_extra_repo_url: 'http://repos.fusiondirectory.org/fusiondirectory-extra/rhel{{ ansible_distribution_major_version }}/RPMS'
+slapd_fd_extra_repo_url: 'http://repos.fusiondirectory.org/fusiondirectory-extra/rhel{{ ansible_distribution_major_version }}/RPMS/'
 
 slapd_fd_packages:
   - 'fusiondirectory'
@@ -120,4 +119,4 @@ slapd_fd_packages:
   - 'fusiondirectory-plugin-webservice-schema'
 
 slapd_epel_repo_name: 'epel'
-slapd_epel_repo_url: 'http://mirrors.tuna.tsinghua.edu.cn/epel/{{ ansible_distribution_major_version }}/$basearch/'
+slapd_epel_repo_url: 'http://mirrors.tuna.tsinghua.edu.cn/epel/$releasever/$basearch/'
