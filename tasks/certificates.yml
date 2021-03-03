@@ -10,7 +10,7 @@
       pip:
         name: '{{ slapd_python_dependent_packages }}'
         state: 'forcereinstall'
-        extra_args: '--default-timeout=120 --ignore-installed -i https://{{ slapd_pypi_url }}/simple --trusted-host {{ slapd_pypi_url }}'
+        extra_args: '--default-timeout=120 -i https://{{ slapd_pypi_url }}/simple --trusted-host {{ slapd_pypi_url }}'
       register: slapd_python_status
       until: slapd_python_status is succeeded
       retries: 5
